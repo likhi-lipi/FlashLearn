@@ -22,6 +22,68 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// @route   GET api/decks/all
+// @desc    Get all public decks
+// @access  Private
+router.get('/all', auth, async (req, res) => {
+  try {
+    const decks = await Deck.find().sort({ title: 1 });
+    const deckWithCounts = await Promise.all(decks.map(async (deck) => {
+        const count = await Card.countDocuments({ deck: deck._id });
+        return { ...deck._doc, cardCount: count };
+    }));
+    res.json(deckWithCounts);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   GET api/decks/popular
+// @desc    Get most popular decks
+// @access  Private
+router.get('/popular', auth, async (req, res) => {
+  try {
+    const decks = await Deck.aggregate([
+      {
+        $lookup: {
+          from: 'cards',
+          localField: '_id',
+          foreignField: 'deck',
+          as: 'cards'
+        }
+      },
+      {
+        $addFields: { cardCount: { $size: "$cards" } }
+      },
+      { $sort: { cardCount: -1 } },
+      { $limit: 20 },
+      { $project: { cards: 0 } }
+    ]);
+    res.json(decks);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   GET api/decks/recent
+// @desc    Get recently added decks
+// @access  Private
+router.get('/recent', auth, async (req, res) => {
+  try {
+    const decks = await Deck.find().sort({ createdAt: -1 }).limit(20);
+    const deckWithCounts = await Promise.all(decks.map(async (deck) => {
+        const count = await Card.countDocuments({ deck: deck._id });
+        return { ...deck._doc, cardCount: count };
+    }));
+    res.json(deckWithCounts);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 // @route   POST api/decks
 // @desc    Create a deck
 // @access  Private

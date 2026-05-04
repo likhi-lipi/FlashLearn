@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axios';
-import { ArrowLeft, Trash2, Plus, Volume2 } from 'lucide-react';
+import { ArrowLeft, Trash2, Plus, Volume2, Mic } from 'lucide-react';
 
 const DeckDetail = () => {
   const { id } = useParams();
@@ -62,6 +62,21 @@ const DeckDetail = () => {
     window.speechSynthesis.speak(utterance);
   };
 
+  const handleDictate = (setter) => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Your browser does not support Speech Recognition.");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setter(prev => prev + (prev ? ' ' : '') + transcript);
+    };
+    recognition.start();
+  };
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="flex items-center space-x-4 mb-8">
@@ -88,7 +103,12 @@ const DeckDetail = () => {
         <div className="glass-panel p-6 rounded-xl animate-fade-in-down">
           <form onSubmit={handleAddCard} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Question (Front)</label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm text-gray-400">Question (Front)</label>
+                <button type="button" onClick={() => handleDictate(setNewQ)} className="text-gray-500 hover:text-primary flex items-center space-x-1 text-xs" title="Dictate">
+                  <Mic size={16}/> <span>Dictate</span>
+                </button>
+              </div>
               <textarea 
                 className="w-full bg-background border border-gray-700 rounded p-3 focus:border-primary focus:outline-none"
                 rows="3"
@@ -98,7 +118,12 @@ const DeckDetail = () => {
               ></textarea>
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Answer (Back)</label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm text-gray-400">Answer (Back)</label>
+                <button type="button" onClick={() => handleDictate(setNewA)} className="text-gray-500 hover:text-primary flex items-center space-x-1 text-xs" title="Dictate">
+                  <Mic size={16}/> <span>Dictate</span>
+                </button>
+              </div>
               <textarea 
                 className="w-full bg-background border border-gray-700 rounded p-3 focus:border-primary focus:outline-none"
                 rows="3"

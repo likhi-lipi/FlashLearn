@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { Wand2, Save, Trash2, Check, RefreshCw } from 'lucide-react';
+import { Wand2, Save, Trash2, Check, RefreshCw, Mic } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const AIGenerator = () => {
@@ -11,6 +11,7 @@ const AIGenerator = () => {
   const [selectedDeck, setSelectedDeck] = useState('');
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,14 +31,31 @@ const AIGenerator = () => {
   const handleGenerate = async () => {
     if (!text.trim()) return;
     setLoading(true);
+    setError(null);
     try {
       const res = await api.post('/ai/generate', { text });
       setGeneratedCards(res.data);
     } catch (err) {
       console.error(err);
+      setError("Failed to generate flashcards. Please check your API key and try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDictate = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Your browser does not support Speech Recognition.");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setText(prev => prev + (prev ? ' ' : '') + transcript);
+    };
+    recognition.start();
   };
 
   const removeCard = (index) => {
@@ -82,12 +100,27 @@ const AIGenerator = () => {
       </div>
 
       <div className="glass-panel p-6 rounded-xl space-y-4 shadow-xl">
-        <textarea
-          className="w-full h-48 bg-background border border-gray-700 rounded-lg p-4 text-white focus:outline-none focus:border-primary resize-none"
-          placeholder="Paste your text here (e.g., 'Photosynthesis is a process used by plants...')"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        ></textarea>
+        <div className="relative">
+          <textarea
+            className="w-full h-48 bg-background border border-gray-700 rounded-lg p-4 pb-12 text-white focus:outline-none focus:border-primary resize-none"
+            placeholder="Paste your text here (e.g., 'Photosynthesis is a process used by plants...')"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          ></textarea>
+          <button 
+            onClick={handleDictate}
+            title="Dictate text"
+            className="absolute bottom-4 right-4 bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full transition-colors shadow-lg flex items-center justify-center"
+          >
+            <Mic size={20} />
+          </button>
+        </div>
+        
+        {error && (
+          <div className="bg-error/20 border border-error text-red-200 px-4 py-3 rounded-lg flex items-center gap-2 text-sm">
+            <span>⚠️</span> {error}
+          </div>
+        )}
         
         <div className="flex justify-end">
           <button 

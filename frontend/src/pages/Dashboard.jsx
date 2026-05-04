@@ -4,7 +4,7 @@ import api from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import { Plus, BookOpen, Trash2 } from 'lucide-react';
+import { Plus, BookOpen, Trash2, BarChart3 } from 'lucide-react';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
@@ -120,7 +120,27 @@ const Dashboard = () => {
         <div className="md:col-span-2 glass-panel p-6 rounded-xl">
           <h2 className="text-xl font-bold mb-6 border-b border-gray-700 pb-2">Your Decks</h2>
           {decks.length === 0 ? (
-            <p className="text-gray-400">You don't have any decks yet. Create one to start learning!</p>
+            <div className="bg-background border border-dashed border-gray-700 rounded-xl p-8 text-center flex flex-col items-center">
+              <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4 text-gray-500">
+                <BookOpen size={32} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">No decks yet</h3>
+              <p className="text-gray-400 mb-6 max-w-md">Create your first flashcard deck manually, or let our AI generate one for you instantly from your notes.</p>
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setShowNewDeck(true)}
+                  className="bg-primary text-background font-bold px-6 py-2 rounded-lg hover:bg-opacity-90 transition"
+                >
+                  Create Manual Deck
+                </button>
+                <Link 
+                  to="/generate"
+                  className="bg-secondary text-background font-bold px-6 py-2 rounded-lg hover:bg-opacity-90 transition"
+                >
+                  Generate with AI
+                </Link>
+              </div>
+            </div>
           ) : (
             <div className="grid sm:grid-cols-2 gap-4">
               {decks.map(deck => (
@@ -148,26 +168,33 @@ const Dashboard = () => {
         <div className="glass-panel p-6 rounded-xl space-y-6">
           <h2 className="text-xl font-bold border-b border-gray-700 pb-2">Analytics</h2>
           {analytics ? (
-            <>
-              <div className="grid grid-cols-2 gap-4 text-center">
-                <div className="bg-background p-4 rounded-lg border border-gray-800">
-                  <p className="text-xs text-gray-400 uppercase tracking-wider">Total Cards</p>
-                  <p className="text-3xl font-bold text-primary">{analytics.totalCards}</p>
-                </div>
-                <div className="bg-background p-4 rounded-lg border border-gray-800">
-                  <p className="text-xs text-gray-400 uppercase tracking-wider">Day Streak</p>
-                  <p className="text-3xl font-bold text-secondary">{analytics.streak}🔥</p>
-                </div>
+            analytics.totalCards === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <BarChart3 size={48} className="mx-auto mb-4 opacity-50" />
+                <p>No study data yet. Start reviewing cards to see your progress!</p>
               </div>
-              <div className="mt-6">
-                <p className="text-sm text-gray-400 text-center mb-2">Knowledge Mastery</p>
-                <div className="w-48 h-48 mx-auto">
-                  <Doughnut data={chartData} options={{ cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: '#fff'} } } }} />
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-4 text-center">
+                  <div className="bg-background p-4 rounded-lg border border-gray-800">
+                    <p className="text-xs text-gray-400 uppercase tracking-wider">Total Cards</p>
+                    <p className="text-3xl font-bold text-primary">{analytics.totalCards}</p>
+                  </div>
+                  <div className="bg-background p-4 rounded-lg border border-gray-800">
+                    <p className="text-xs text-gray-400 uppercase tracking-wider">Day Streak</p>
+                    <p className="text-3xl font-bold text-secondary">{analytics.streak}🔥</p>
+                  </div>
                 </div>
-              </div>
-            </>
+                <div className="mt-6">
+                  <p className="text-sm text-gray-400 text-center mb-2">Knowledge Mastery</p>
+                  <div className="w-48 h-48 mx-auto">
+                    <Doughnut data={chartData} options={{ cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: '#fff'} } } }} />
+                  </div>
+                </div>
+              </>
+            )
           ) : (
-            <p className="text-gray-400 text-sm">Loading analytics...</p>
+            <p className="text-gray-400 text-sm text-center py-8">Loading analytics...</p>
           )}
         </div>
       </div>
