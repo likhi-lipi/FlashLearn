@@ -2,23 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: #fdf6f4;
+  --foreground: #4a2c2a;
+  --primary: #e3979d;
+  --secondary: #f3e8e4;
+  --accent: #f9e8e6;
+  --dark: #1e1b1b;
+  --green-light: #eef6f1;
+}
+
 body {
-  background-color: #121212;
-  color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Outfit', 'Inter', sans-serif;
   margin: 0;
   padding: 0;
 }
 
 .glass-panel {
-  background: rgba(30, 30, 30, 0.7);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.card-flip-container {
-  perspective: 1000px;
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
 }
 
 .card-flip-inner {
@@ -47,4 +63,57 @@ body {
 
 .card-back {
   transform: rotateY(180deg);
+}
+
+@keyframes sparkle-text {
+  0% { text-shadow: 0 0 4px rgba(227, 151, 157, 0.4); }
+  50% { text-shadow: 0 0 8px rgba(227, 151, 157, 0.8), 0 0 15px rgba(227, 151, 157, 0.4); }
+  100% { text-shadow: 0 0 4px rgba(227, 151, 157, 0.4); }
+}
+
+.sparkle-hover {
+  transition: all 0.3s ease;
+}
+
+.sparkle-hover:hover {
+  animation: sparkle-text 1.5s infinite;
+}
+
+.perspective-2000 {
+  perspective: 2000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.hero-gradient {
+  background: radial-gradient(circle at center, #f9e8e6 0%, #fdf6f4 70%);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
 }

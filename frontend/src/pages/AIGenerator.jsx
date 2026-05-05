@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { Wand2, Save, Trash2, Check, RefreshCw, Mic } from 'lucide-react';
+import { Wand2, Save, Trash2, Check, RefreshCw, Mic, FileText, Link as LinkIcon, Layers, Settings2, Sliders } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const AIGenerator = () => {
   const [text, setText] = useState('');
+  const [sourceType, setSourceType] = useState('text'); // text, url, pdf
+  const [cardCount, setCardCount] = useState(5);
+  const [complexity, setComplexity] = useState('standard');
   const [loading, setLoading] = useState(false);
   const [generatedCards, setGeneratedCards] = useState([]);
   const [decks, setDecks] = useState([]);
@@ -33,11 +36,11 @@ const AIGenerator = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.post('/ai/generate', { text });
+      const res = await api.post('/ai/generate', { text, count: cardCount, complexity });
       setGeneratedCards(res.data);
     } catch (err) {
       console.error(err);
-      setError("Failed to generate flashcards. Please check your API key and try again.");
+      setError("We couldn't generate cards from that content. Please check your text and try again.");
     } finally {
       setLoading(false);
     }
@@ -74,7 +77,6 @@ const AIGenerator = () => {
     if (!selectedDeck || generatedCards.length === 0) return;
     setSaving(true);
     try {
-      // Save cards sequentially or Promise.all
       await Promise.all(
         generatedCards.map(card => 
           api.post('/cards', { deck: selectedDeck, question: card.question, answer: card.answer })
@@ -91,58 +93,156 @@ const AIGenerator = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="text-center space-y-2">
-        <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-          AI Flashcard Generator
+    <div className="max-w-5xl mx-auto space-y-10 pb-20 animate-fade-in font-['Outfit']">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="inline-flex items-center gap-2 bg-[#f9e8e6] text-[#e3979d] px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
+          <Wand2 size={14} /> AI Creation Lab
+        </div>
+        <h1 className="text-5xl font-bold text-[#4a2c2a] tracking-tight">
+          Turn anything into knowledge.
         </h1>
-        <p className="text-gray-400">Paste your notes, article, or text below and let AI create study cards for you.</p>
+        <p className="text-[#4a2c2a]/50 text-lg max-w-2xl mx-auto">
+          Paste notes, drop a URL, or upload a PDF. Our AI handles the heavy lifting so you can focus on learning.
+        </p>
       </div>
 
-      <div className="glass-panel p-6 rounded-xl space-y-4 shadow-xl">
-        <div className="relative">
-          <textarea
-            className="w-full h-48 bg-background border border-gray-700 rounded-lg p-4 pb-12 text-white focus:outline-none focus:border-primary resize-none"
-            placeholder="Paste your text here (e.g., 'Photosynthesis is a process used by plants...')"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          ></textarea>
-          <button 
-            onClick={handleDictate}
-            title="Dictate text"
-            className="absolute bottom-4 right-4 bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full transition-colors shadow-lg flex items-center justify-center"
-          >
-            <Mic size={20} />
-          </button>
-        </div>
-        
-        {error && (
-          <div className="bg-error/20 border border-error text-red-200 px-4 py-3 rounded-lg flex items-center gap-2 text-sm">
-            <span>⚠️</span> {error}
+      <div className="grid lg:grid-cols-3 gap-10">
+        {/* Left: Input & Settings */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Source Tabs */}
+          <div className="bg-white p-2 rounded-full border border-[#f3e8e4] shadow-sm flex gap-2">
+            {[
+              { id: 'text', label: 'Text Input', icon: FileText },
+              { id: 'url', label: 'Website URL', icon: LinkIcon },
+              { id: 'pdf', label: 'PDF / Document', icon: Layers }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setSourceType(tab.id)}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold transition-all ${
+                  sourceType === tab.id 
+                  ? 'bg-[#4a2c2a] text-white shadow-lg shadow-[#4a2c2a]/10' 
+                  : 'text-[#4a2c2a]/40 hover:text-[#4a2c2a] hover:bg-[#fdf6f4]'
+                }`}
+              >
+                <tab.icon size={18} />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </button>
+            ))}
           </div>
-        )}
-        
-        <div className="flex justify-end">
-          <button 
-            onClick={handleGenerate}
-            disabled={loading || !text.trim()}
-            className="bg-primary text-background font-bold px-6 py-3 rounded-lg flex items-center space-x-2 disabled:opacity-50 hover:bg-opacity-90 transition-transform transform hover:scale-105 active:scale-95"
-          >
-            {loading ? <RefreshCw className="animate-spin" size={20} /> : <Wand2 size={20} />}
-            <span>{loading ? 'Generating...' : 'Generate Cards'}</span>
-          </button>
+
+          {/* Input Area */}
+          <div className="bg-white rounded-[2.5rem] p-8 border border-[#f3e8e4] shadow-sm space-y-6">
+            <div className="relative">
+              <textarea
+                className="w-full h-64 bg-[#fdf6f4] border border-transparent rounded-[1.5rem] p-8 text-[#4a2c2a] focus:outline-none focus:bg-white focus:border-[#e3979d] transition-all resize-none text-lg leading-relaxed placeholder-[#4a2c2a]/20"
+                placeholder={
+                  sourceType === 'text' ? "Paste your study notes here..." :
+                  sourceType === 'url' ? "Paste a link to an article or video transcript..." :
+                  "Upload feature coming soon! For now, please paste the text."
+                }
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+              ></textarea>
+              <button 
+                onClick={handleDictate}
+                title="Dictate text"
+                className="absolute bottom-6 right-6 bg-white hover:bg-[#fdf6f4] text-[#4a2c2a] w-12 h-12 rounded-full transition-all shadow-md flex items-center justify-center border border-[#f3e8e4]"
+              >
+                <Mic size={20} />
+              </button>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <p className="text-[11px] font-bold text-[#4a2c2a]/30 uppercase tracking-widest ml-4">
+                {text.length} characters entered
+              </p>
+              <button 
+                onClick={handleGenerate}
+                disabled={loading || !text.trim()}
+                className="bg-[#e3979d] text-white font-bold px-10 py-4 rounded-full flex items-center gap-3 disabled:opacity-50 hover:bg-[#d8868c] transition-all shadow-lg shadow-[#e3979d]/20"
+              >
+                {loading ? <RefreshCw className="animate-spin" size={20} /> : <Zap size={20} />}
+                <span>{loading ? 'Thinking...' : 'Generate Flashcards'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Settings */}
+        <div className="space-y-8">
+          <div className="bg-white rounded-[2.5rem] p-8 border border-[#f3e8e4] shadow-sm space-y-8">
+            <div className="flex items-center gap-2 mb-2">
+              <Settings2 size={18} className="text-[#e3979d]" />
+              <h3 className="font-bold text-[#4a2c2a]">Generation Settings</h3>
+            </div>
+
+            {/* Card Count */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <label className="text-[11px] font-bold text-[#4a2c2a]/50 uppercase tracking-widest">Card Count</label>
+                <span className="text-[#4a2c2a] font-bold">{cardCount}</span>
+              </div>
+              <input 
+                type="range" min="3" max="20" step="1"
+                value={cardCount}
+                onChange={(e) => setCardCount(parseInt(e.target.value))}
+                className="w-full accent-[#e3979d]"
+              />
+            </div>
+
+            {/* Complexity */}
+            <div className="space-y-4">
+              <label className="text-[11px] font-bold text-[#4a2c2a]/50 uppercase tracking-widest">Complexity Level</label>
+              <div className="grid grid-cols-2 gap-2">
+                {['standard', 'advanced'].map(level => (
+                  <button
+                    key={level}
+                    onClick={() => setComplexity(level)}
+                    className={`py-3 rounded-2xl text-xs font-bold capitalize transition-all border ${
+                      complexity === level 
+                      ? 'bg-[#f9e8e6] border-[#e3979d] text-[#e3979d]' 
+                      : 'bg-white border-[#f3e8e4] text-[#4a2c2a]/40 hover:border-[#4a2c2a]/20'
+                    }`}
+                  >
+                    {level}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-[#fdf6f4]">
+              <div className="flex items-center gap-2 text-[11px] text-[#4a2c2a]/40 italic">
+                <Sparkles size={14} />
+                Human-like tone enabled
+              </div>
+            </div>
+          </div>
+
+          {error && (
+            <div className="bg-[#fcf1f1] border border-[#f8dada] text-[#d9534f] p-6 rounded-[2rem] flex items-start gap-4 animate-shake">
+              <Trash2 size={20} className="shrink-0 mt-1" />
+              <p className="text-sm font-medium">{error}</p>
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Generated Results Area */}
       {generatedCards.length > 0 && (
-        <div className="space-y-6 animate-fade-in-up">
-          <div className="flex justify-between items-end border-b border-gray-800 pb-4">
-            <h2 className="text-2xl font-bold">Review Generated Cards</h2>
-            <div className="flex items-center space-x-4">
+        <div className="space-y-8 pt-10 border-t border-[#f3e8e4] animate-fade-in-up">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 px-4">
+            <div>
+              <h2 className="text-3xl font-bold text-[#4a2c2a]">Review & Refine</h2>
+              <p className="text-[#4a2c2a]/40 text-sm mt-1">Review the AI generated cards before saving them to your deck.</p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
               <select 
                 value={selectedDeck}
                 onChange={(e) => setSelectedDeck(e.target.value)}
-                className="bg-background border border-gray-700 rounded px-3 py-2 text-white outline-none focus:border-primary"
+                className="w-full sm:w-64 bg-white border border-[#f3e8e4] rounded-full px-6 py-4 text-[#4a2c2a] outline-none focus:border-[#e3979d] shadow-sm"
               >
                 {decks.length === 0 && <option value="">No decks available</option>}
                 {decks.map(d => (
@@ -152,40 +252,47 @@ const AIGenerator = () => {
               <button 
                 onClick={handleSaveCards}
                 disabled={saving || !selectedDeck || success}
-                className={`font-bold px-6 py-2 rounded-lg flex items-center space-x-2 transition-all ${
-                  success ? 'bg-green-500 text-white' : 'bg-secondary text-background hover:bg-opacity-90'
+                className={`w-full sm:w-auto font-bold px-10 py-4 rounded-full flex items-center justify-center gap-3 transition-all shadow-lg ${
+                  success 
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-[#4a2c2a] text-white hover:bg-[#382120] shadow-[#4a2c2a]/20'
                 }`}
               >
-                {success ? <><Check size={20} /> <span>Saved!</span></> : <><Save size={20} /> <span>Save to Deck</span></>}
+                {success ? <><Check size={20} /> <span>Saved Successfully</span></> : <><Save size={20} /> <span>Add to Deck</span></>}
               </button>
             </div>
           </div>
 
-          <div className="grid gap-4">
+          <div className="grid gap-6">
             {generatedCards.map((card, idx) => (
-              <div key={idx} className="glass-panel p-4 rounded-lg flex gap-4 relative group">
-                <div className="flex-1 space-y-2">
-                  <label className="text-xs text-primary uppercase">Question</label>
+              <div key={idx} className="bg-white border border-[#f3e8e4] p-8 rounded-[2rem] flex flex-col md:flex-row gap-8 relative group shadow-sm hover:shadow-xl hover:shadow-[#e3979d]/5 transition-all">
+                <div className="flex-1 space-y-3">
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-[#e3979d] uppercase tracking-widest">
+                    <Sliders size={12} /> Front side
+                  </div>
                   <textarea 
-                    className="w-full bg-transparent border-b border-gray-700 focus:border-primary focus:outline-none resize-none"
+                    className="w-full bg-[#fdf6f4] rounded-[1.5rem] p-6 text-[#4a2c2a] font-bold focus:bg-white focus:border-[#e3979d] border border-transparent transition-all outline-none resize-none"
                     value={card.question}
                     onChange={(e) => handleCardChange(idx, 'question', e.target.value)}
+                    rows={3}
                   />
                 </div>
-                <div className="w-px bg-gray-800"></div>
-                <div className="flex-1 space-y-2">
-                  <label className="text-xs text-secondary uppercase">Answer</label>
+                <div className="flex-1 space-y-3">
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-[#4a2c2a]/40 uppercase tracking-widest">
+                    <Check size={12} /> Back side
+                  </div>
                   <textarea 
-                    className="w-full bg-transparent border-b border-gray-700 focus:border-primary focus:outline-none resize-none"
+                    className="w-full bg-[#fdf6f4] rounded-[1.5rem] p-6 text-[#4a2c2a] focus:bg-white focus:border-[#e3979d] border border-transparent transition-all outline-none resize-none"
                     value={card.answer}
                     onChange={(e) => handleCardChange(idx, 'answer', e.target.value)}
+                    rows={3}
                   />
                 </div>
                 <button 
                   onClick={() => removeCard(idx)}
-                  className="absolute -right-2 -top-2 bg-error text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                  className="absolute -right-3 -top-3 bg-white text-[#d9534f] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-xl border border-[#f3e8e4] hover:bg-[#fcf1f1]"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={18} />
                 </button>
               </div>
             ))}

@@ -7,7 +7,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const tryGenerateWithKey = async (apiKey, prompt) => {
   if (!apiKey) throw new Error("API key not provided");
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
   const result = await model.generateContent(prompt);
   return result.response.text();
 };
@@ -16,49 +16,39 @@ const tryGenerateWithKey = async (apiKey, prompt) => {
 // @desc    Generate flashcards from text using Gemini AI
 // @access  Private
 router.post('/generate', auth, async (req, res) => {
-  const { text } = req.body;
-  
+  const { text, count = 5, complexity = 'standard' } = req.body;
+
   if (!text) {
     return res.status(400).json({ msg: 'Text is required for generation' });
   }
 
-  const prompt = `You are an expert educational assistant that creates high-quality flashcards.
+  const prompt = `You are a high-achieving student helping a friend study. Your goal is to create flashcards that feel human, engaging, and easy to grasp, rather than robotic or purely academic.
 
 Task:
-Convert the given text into clear, concise flashcards for effective learning.
+Turn the following content into ${count} super-clear flashcards.
 
-Instructions:
-- Generate 5–10 flashcards
-- Each flashcard must have:
-  - "question": a clear, exam-style question
-  - "answer": a short, accurate answer
-- Keep answers concise (1–3 lines max)
-- Focus on key concepts, definitions, and important facts
-- Avoid vague or generic questions
-- Do NOT repeat similar questions
-- Make questions useful for revision and memory recall
+Style Guide:
+- Tone: Conversational, friendly, and intuitive.
+- Complexity Level: ${complexity} (if "advanced", dive deep; if "standard", focus on core intuition).
+- Question Style: Instead of just "What is X?", use "How would you explain X to someone for the first time?" or "What's the main takeaway from X?".
+- Answer Style: Short, punchy, and uses analogies where helpful. Keep it to 1-2 sentences.
+- Focus: Key concepts that actually matter for understanding the big picture.
 
 Output Format (STRICT JSON ONLY):
 [
   {
-    "question": "What is ...?",
-    "answer": "..."
-  },
-  {
-    "question": "Explain ...",
+    "question": "...",
     "answer": "..."
   }
 ]
 
-Do not include any explanation, text, or formatting outside the JSON.
-
-Text:
+Text to process:
 ${text}`;
 
   try {
     let responseText;
     const keys = [
-      process.env.GEMINI_API_KEY_1, 
+      process.env.GEMINI_API_KEY_1,
       process.env.GEMINI_API_KEY_2,
       process.env.GEMINI_API_KEY // fallback in case of old .env
     ].filter(Boolean); // Remove undefined/null keys
@@ -86,7 +76,7 @@ ${text}`;
     if (!success) {
       throw lastError || new Error("All API keys failed");
     }
-    
+
     // Clean up response if it contains markdown JSON blocks
     let jsonStr = responseText.trim();
     if (jsonStr.startsWith('\`\`\`json')) {
