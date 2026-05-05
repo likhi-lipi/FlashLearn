@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard/index';
 import DeckDetail from './pages/DeckDetail/index';
 import StudyMode from './pages/StudyMode/index';
 import AIGenerator from './pages/AIGenerator/index';
+import BrowseDecks from './pages/BrowseDecks';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -25,11 +26,14 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<div className="container mx-auto px-4 py-8 max-w-7xl flex-1"><Login /></div>} />
-          <Route path="/dashboard" element={<ProtectedRoute><div className="container mx-auto px-4 py-8 max-w-7xl flex-1"><Dashboard /></div></ProtectedRoute>} />
-          <Route path="/deck/:id" element={<ProtectedRoute><div className="container mx-auto px-4 py-8 max-w-7xl flex-1"><DeckDetail /></div></ProtectedRoute>} />
-          <Route path="/study/:id" element={<ProtectedRoute><div className="container mx-auto px-4 py-8 max-w-7xl flex-1"><StudyMode /></div></ProtectedRoute>} />
-          <Route path="/generate" element={<ProtectedRoute><div className="container mx-auto px-4 py-8 max-w-7xl flex-1"><AIGenerator /></div></ProtectedRoute>} />
+          <Route path="/login" element={<div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><Login /></div>} />
+          <Route path="/dashboard" element={<ProtectedRoute><div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><Dashboard /></div></ProtectedRoute>} />
+          <Route path="/deck/:id" element={<ProtectedRoute><div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><DeckDetail /></div></ProtectedRoute>} />
+          <Route path="/study/:id" element={<ProtectedRoute><div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><StudyMode /></div></ProtectedRoute>} />
+          <Route path="/generate" element={<ProtectedRoute><div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><AIGenerator /></div></ProtectedRoute>} />
+          <Route path="/browse" element={<ProtectedRoute><div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><BrowseDecks type="all" title="Browse All Subjects" /></div></ProtectedRoute>} />
+          <Route path="/popular" element={<ProtectedRoute><div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><BrowseDecks type="popular" title="Most Popular Decks" /></div></ProtectedRoute>} />
+          <Route path="/recent" element={<ProtectedRoute><div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><BrowseDecks type="recent" title="Recently Added Decks" /></div></ProtectedRoute>} />
         </Routes>
         <Footer />
       </div>

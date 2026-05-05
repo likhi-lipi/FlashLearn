@@ -18,6 +18,8 @@ export default {
       },
       fontFamily: {
         sans: ['"Outfit"', '"Inter"', 'system-ui', 'sans-serif'],
+        outfit: ['"Outfit"', 'sans-serif'],
+      }
       }
     },
   },

@@ -25,9 +25,9 @@ const Navbar = () => {
         
         {/* Links */}
         <div className="hidden lg:flex items-center space-x-10 text-[15px] font-bold text-[#4A4A4A]">
-          <Link to="/dashboard" className={`transition-colors relative group py-1 ${isActive('/generate') ? 'text-primary' : 'hover:text-primary'}`}>
+          <Link to="/browse" className={`transition-colors relative group py-1 ${isActive('/browse') ? 'text-primary' : 'hover:text-primary'}`}>
             Find Flashcards
-            <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/generate') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+            <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/browse') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
           </Link>
           <Link to="/generate" className={`transition-colors relative group py-1 ${isActive('/generate') ? 'text-primary' : 'hover:text-primary'}`}>
             Make Flashcards
