@@ -3,12 +3,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useContext } from 'react';
 import { AuthContext } from './context/AuthContext';
 import Navbar from './components/Navbar';
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import DeckDetail from './pages/DeckDetail';
-import StudyMode from './pages/StudyMode';
-import AIGenerator from './pages/AIGenerator';
+import Footer from './components/Footer';
+import Landing from './pages/Landing/index';
+import Login from './pages/Login/index';
+import Dashboard from './pages/Dashboard/index';
+import DeckDetail from './pages/DeckDetail/index';
+import StudyMode from './pages/StudyMode/index';
+import AIGenerator from './pages/AIGenerator/index';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -20,7 +21,7 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-background text-white font-sans flex flex-col">
+      <div className="min-h-screen bg-background text-dark font-sans flex flex-col">
         <Navbar />
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -30,6 +31,7 @@ function App() {
           <Route path="/study/:id" element={<ProtectedRoute><div className="container mx-auto px-4 py-8 max-w-7xl flex-1"><StudyMode /></div></ProtectedRoute>} />
           <Route path="/generate" element={<ProtectedRoute><div className="container mx-auto px-4 py-8 max-w-7xl flex-1"><AIGenerator /></div></ProtectedRoute>} />
         </Routes>
+        <Footer />
       </div>
     </Router>
   );
