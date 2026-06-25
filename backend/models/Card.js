@@ -14,6 +14,10 @@ const CardSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  image: {
+    type: String,
+    default: ''
+  },
   difficulty: {
     type: Number,
     default: 0 // e.g., 0: New, 1: Easy, 2: Medium, 3: Hard

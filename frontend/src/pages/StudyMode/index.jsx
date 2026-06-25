@@ -79,9 +79,9 @@ const StudyMode = () => {
   const currentCard = cards[currentIndex];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10 pb-20 pt-10 flex flex-col h-[85vh]">
+    <div className="max-w-5xl mx-auto space-y-10 pb-24 pt-10 flex flex-col min-h-[calc(100vh-160px)]">
       <div className="flex justify-between items-center">
-        <Link to="/dashboard" className="w-12 h-12 rounded-full bg-white border border-gray-100 flex items-center justify-center text-muted hover:text-accent transition-colors shadow-sm">
+        <Link to="/dashboard" className="w-12 h-12 rounded-full bg-white border border-gray-100 flex items-center justify-center text-muted hover:text-primary transition-colors shadow-sm">
           <ArrowLeft size={20} />
         </Link>
         <div className="flex flex-col items-center">
@@ -95,75 +95,77 @@ const StudyMode = () => {
         </div>
       </div>
 
-      <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+      <div className="w-full bg-gray-200/60 rounded-full h-1.5 overflow-hidden">
         <div 
-          className="bg-primary h-full rounded-full transition-all duration-700 ease-out" 
+          className="bg-[#8A5A6B] h-full rounded-full transition-all duration-700 ease-out" 
           style={{ width: `${((currentIndex) / cards.length) * 100}%` }}
         ></div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center items-center perspective-1000 py-10">
+      <div className="flex-1 flex flex-col justify-center items-center perspective-1000 py-10 w-full">
         <div 
-          className={`relative w-full max-w-2xl aspect-[1.6] transition-transform duration-700 transform-style-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`}
+          className={`relative w-full max-w-2xl min-h-[420px] transition-transform duration-700 transform-style-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`}
           onClick={() => !isFlipped && setIsFlipped(true)}
         >
           {/* Front */}
-          <div className="absolute w-full h-full backface-hidden bg-white rounded-[3rem] p-12 flex flex-col items-center justify-center shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] border border-gray-50 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-2 bg-primary/20"></div>
+          <div className="absolute inset-0 w-full h-full backface-hidden bg-white rounded-[3rem] p-12 flex flex-col items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] transition-all">
             <button 
               onClick={(e) => { e.stopPropagation(); playTTS(currentCard.question); }}
               className="absolute top-8 right-8 w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-muted hover:text-primary transition-colors"
             >
               <Volume2 size={24} />
             </button>
-            <h3 className="text-primary text-xs font-bold uppercase mb-8 tracking-[0.2em]">Question</h3>
-            <p className="text-3xl md:text-4xl text-center font-bold text-dark leading-snug max-w-md">{currentCard.question}</p>
+            <h3 className="text-primary text-[11px] font-bold uppercase mb-8 tracking-[0.2em]">Question</h3>
+            <h2 className="text-3xl md:text-4xl text-center font-bold text-dark leading-tight tracking-tight max-w-md whitespace-pre-wrap">{currentCard.question}</h2>
             {!isFlipped && (
-              <div className="absolute bottom-10 flex items-center gap-2 text-muted/40 font-bold text-sm uppercase tracking-widest animate-pulse">
-                 <span>Tap to reveal</span>
+              <div className="absolute bottom-10 flex items-center gap-2 text-gray-400 font-medium text-sm italic animate-pulse">
+                 <span>Click the card to reveal the answer</span>
               </div>
             )}
           </div>
 
           {/* Back */}
-          <div className="absolute w-full h-full backface-hidden bg-white rounded-[3rem] p-12 flex flex-col items-center justify-center shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] border border-gray-50 rotate-y-180 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-2 bg-accent/20"></div>
+          <div className="absolute inset-0 w-full h-full backface-hidden bg-white rounded-[3rem] p-12 flex flex-col items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100 rotate-y-180 overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] transition-all">
             <button 
               onClick={(e) => { e.stopPropagation(); playTTS(currentCard.answer); }}
-              className="absolute top-8 right-8 w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-muted hover:text-accent transition-colors"
+              className="absolute top-8 right-8 w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-muted hover:text-primary transition-colors"
             >
               <Volume2 size={24} />
             </button>
-            <h3 className="text-accent text-xs font-bold uppercase mb-8 tracking-[0.2em]">Answer</h3>
-            <p className="text-2xl md:text-3xl text-center font-medium text-muted leading-relaxed max-w-md">{currentCard.answer}</p>
+            <h3 className="text-primary text-[11px] font-bold uppercase mb-8 tracking-[0.2em]">Answer</h3>
+            <h2 className="text-2xl md:text-3xl text-center font-bold text-dark leading-tight tracking-tight max-w-md whitespace-pre-wrap mb-6">{currentCard.answer}</h2>
+            
+            {currentCard.image && (
+              <img src={currentCard.image} alt="Reference" className="max-h-40 rounded-xl object-contain mb-8 shadow-sm border border-gray-100" />
+            )}
           </div>
         </div>
       </div>
 
       {/* Controls */}
-      <div className={`transition-all duration-500 transform ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
-        <h4 className="text-center text-xs font-bold text-muted uppercase tracking-[0.2em] mb-8">How was your recall?</h4>
-        <div className="flex justify-center items-center gap-6 max-w-2xl mx-auto">
+      <div className={`w-full max-w-2xl mx-auto transition-all duration-500 transform ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
+        <h4 className="text-center text-[11px] font-bold text-muted uppercase tracking-[0.2em] mb-6">How was your recall?</h4>
+        <div className="grid grid-cols-3 gap-4">
           <button 
             onClick={() => handleReview(0)}
-            className="flex-1 bg-white border border-gray-100 text-dark hover:bg-red-50 hover:border-red-100 hover:text-red-500 py-5 rounded-3xl font-bold transition-all shadow-sm flex flex-col items-center gap-1"
+            className="flex flex-col items-center justify-center py-4 rounded-3xl bg-[#FFE6E6] text-[#B30000] font-bold transition-all hover:brightness-95"
           >
             <span className="text-lg">Hard</span>
-            <span className="text-[10px] uppercase opacity-40">1 day</span>
+            <span className="text-[10px] uppercase opacity-70 mt-1">1 day</span>
           </button>
           <button 
             onClick={() => handleReview(1)}
-            className="flex-1 bg-white border border-gray-100 text-dark hover:bg-orange-50 hover:border-orange-100 hover:text-orange-500 py-5 rounded-3xl font-bold transition-all shadow-sm flex flex-col items-center gap-1"
+            className="flex flex-col items-center justify-center py-4 rounded-3xl bg-gray-200/80 text-gray-700 font-bold transition-all hover:brightness-95"
           >
             <span className="text-lg">Good</span>
-            <span className="text-[10px] uppercase opacity-40">4 days</span>
+            <span className="text-[10px] uppercase opacity-70 mt-1">4 days</span>
           </button>
           <button 
             onClick={() => handleReview(2)}
-            className="flex-1 bg-accent text-white hover:opacity-90 py-6 rounded-3xl font-bold transition-all shadow-xl shadow-accent/20 flex flex-col items-center gap-1"
+            className="flex flex-col items-center justify-center py-4 rounded-3xl bg-[#E8F5E9] text-[#2E7D32] font-bold transition-all hover:brightness-95"
           >
-            <span className="text-xl">Easy</span>
-            <span className="text-[10px] uppercase opacity-70">7 days</span>
+            <span className="text-lg">Easy</span>
+            <span className="text-[10px] uppercase opacity-70 mt-1">7 days</span>
           </button>
         </div>
       </div>

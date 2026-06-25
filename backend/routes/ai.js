@@ -7,7 +7,8 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const tryGenerateWithKey = async (apiKey, prompt) => {
   if (!apiKey) throw new Error("API key not provided");
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  // Using gemini-2.5-flash which is confirmed to work
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   const result = await model.generateContent(prompt);
   return result.response.text();
 };
@@ -47,30 +48,23 @@ ${text}`;
 
   try {
     let responseText;
-    const keys = [
-      process.env.GEMINI_API_KEY_1,
-      process.env.GEMINI_API_KEY_2,
-      process.env.GEMINI_API_KEY // fallback in case of old .env
-    ].filter(Boolean); // Remove undefined/null keys
+    const apiKey = process.env.GEMINI_API_KEY_1;
 
-    if (keys.length === 0) {
-      return res.status(500).json({ msg: 'No API keys configured' });
+    if (!apiKey) {
+      return res.status(500).json({ msg: 'GEMINI_API_KEY_1 is not configured' });
     }
 
     let success = false;
     let lastError;
 
-    // Try keys sequentially
-    for (const key of keys) {
-      try {
-        console.log(`Trying API key starting with: ${key.substring(0, 8)}...`);
-        responseText = await tryGenerateWithKey(key, prompt);
-        success = true;
-        break; // Stop loop if successful
-      } catch (err) {
-        console.error(`Error with key ${key.substring(0, 8)}...:`, err.message);
-        lastError = err;
-      }
+    // Try key
+    try {
+      console.log(`Trying API key GEMINI_API_KEY_1 starting with: ${apiKey.substring(0, 8)}...`);
+      responseText = await tryGenerateWithKey(apiKey, prompt);
+      success = true;
+    } catch (err) {
+      console.error(`Error with GEMINI_API_KEY_1:`, err.message);
+      lastError = err;
     }
 
     if (!success) {

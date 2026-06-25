@@ -1,250 +1,205 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
-import { 
-  BookOpen, 
-  Target, 
-  Flame, 
-  ChevronRight, 
-  Sparkles, 
-  TrendingUp, 
-  CheckCircle2,
-  Calendar
-} from 'lucide-react';
+import { Lightbulb, Sparkles } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user } = useContext(AuthContext);
-  const [data, setData] = useState(null);
+  const [deck, setDeck] = useState(null);
+  const [cards, setCards] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const res = await api.get('/analytics');
-        setData(res.data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching dashboard data", err);
-        setLoading(false);
-      }
-    };
-    fetchDashboardData();
+    fetchStudyData();
   }, []);
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
-    </div>
-  );
+  const fetchStudyData = async () => {
+    try {
+      setLoading(true);
+      const decksRes = await api.get('/decks');
+      const decks = decksRes.data;
+      
+      if (decks.length > 0) {
+        // Find a deck that has cards
+        let selectedDeck = null;
+        let studyCards = [];
+        
+        for (let d of decks) {
+          if (d.cardCount > 0) {
+            // First try due cards
+            let res = await api.get(`/cards/study/${d._id}`);
+            if (res.data.length > 0) {
+              selectedDeck = d;
+              studyCards = res.data;
+              break;
+            }
+          }
+        }
+        
+        // If no due cards, just pick the first deck with any cards
+        if (!selectedDeck) {
+          const deckWithCards = decks.find(d => d.cardCount > 0);
+          if (deckWithCards) {
+            selectedDeck = deckWithCards;
+            const res = await api.get(`/cards/deck/${deckWithCards._id}`);
+            studyCards = res.data;
+          }
+        }
+        
+        setDeck(selectedDeck);
+        setCards(studyCards);
+      }
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching study data", err);
+      setLoading(false);
+    }
+  };
 
-  if (!data) return <div className="text-center py-20">Error loading dashboard data.</div>;
+  const handleReview = async (quality) => {
+    if (cards.length === 0 || currentIndex >= cards.length) return;
+    
+    try {
+      const currentCard = cards[currentIndex];
+      await api.put(`/cards/${currentCard._id}/review`, { quality });
+      
+      // Move to next card
+      if (currentIndex < cards.length - 1) {
+        setIsFlipped(false);
+        setCurrentIndex(prev => prev + 1);
+      } else {
+        // Finished deck session
+        setCards([]);
+      }
+    } catch (err) {
+      console.error("Failed to submit review", err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!deck || cards.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
+        <div className="w-24 h-24 bg-white rounded-3xl shadow-sm border border-gray-100 flex items-center justify-center text-4xl">
+          🎉
+        </div>
+        <div>
+          <h2 className="text-3xl font-bold text-dark mb-2">You're all caught up!</h2>
+          <p className="text-muted font-medium text-lg max-w-md mx-auto">No cards due for review right now. Take a break or create some new flashcards.</p>
+        </div>
+        <button 
+          onClick={() => navigate('/make')}
+          className="bg-primary text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all hover:-translate-y-0.5"
+        >
+          Make New Flashcards
+        </button>
+      </div>
+    );
+  }
+
+  const currentCard = cards[currentIndex];
+  const progressPercent = ((currentIndex + 1) / cards.length) * 100;
 
   return (
-    <div className="space-y-10 pb-20 pt-10">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+    <div className="w-full max-w-[900px] mx-auto pt-8 pb-20 flex flex-col items-center">
+      
+      {/* Header section */}
+      <div className="w-full flex justify-between items-end mb-8 px-2">
         <div>
-          <h1 className="text-4xl font-bold text-dark mb-2">Good Morning, {user?.username || 'Learner'}</h1>
-          <p className="text-muted font-medium">You've mastered {data.masteredThisWeek} new concepts this week. Keep the flow.</p>
+          <p className="text-[11px] font-bold text-muted tracking-widest uppercase mb-1">Currently Studying</p>
+          <h1 className="text-3xl font-bold text-dark tracking-tight">{deck.title}</h1>
         </div>
-        <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-           <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
-              <span className="text-lg">🎓</span>
-           </div>
-           <div>
-              <div className="text-xs font-bold text-muted uppercase tracking-wider">Level 14 Polyglot</div>
-              <div className="text-sm font-bold text-dark">2,450 Total XP</div>
-           </div>
+        <div className="flex flex-col items-end gap-2 w-48">
+          <span className="text-xs font-bold text-muted">Progress: {currentIndex + 1}/{cards.length} cards</span>
+          <div className="w-full h-2 bg-gray-200/60 rounded-full overflow-hidden">
+            <div className="h-full bg-[#8A5A6B] rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
+          </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard 
-          icon={<BookOpen className="text-primary" size={20} />}
-          label="Total Studied"
-          value={data.totalStudied.toLocaleString()}
-          subtext="Cards reviewed this month"
-          trend="+12% vs last week"
-          iconBg="bg-pink-50"
-        />
-        <StatCard 
-          icon={<Target className="text-accent" size={20} />}
-          label="Accuracy %"
-          value={`${data.accuracy}%`}
-          subtext="Precision score"
-          progress={data.accuracy}
-          iconBg="bg-accent/10"
-        />
-        <StatCard 
-          icon={<Flame className="text-orange-500" size={20} />}
-          label="Current Streak"
-          value={data.streak}
-          subtext={`Personal best: 24 days`}
-          extraIcon="🔥"
-          iconBg="bg-orange-50"
-        />
-      </div>
+      {/* Main Flashcard */}
+      <div 
+        className="w-full min-h-[420px] bg-white rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-10 flex flex-col relative cursor-pointer group transition-all hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
+        onClick={() => setIsFlipped(!isFlipped)}
+      >
+        <Lightbulb className="absolute top-8 right-8 text-gray-300 group-hover:text-yellow-400 transition-colors" size={24} />
+        
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-4 md:px-12">
+          <span className="text-[11px] font-bold text-muted uppercase tracking-widest mb-6">
+            {isFlipped ? 'ANSWER' : 'QUESTION'}
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-dark leading-tight tracking-tight mb-8 whitespace-pre-wrap">
+            {isFlipped ? currentCard.answer : currentCard.question}
+          </h2>
+          
+          {isFlipped && currentCard.image && (
+            <img src={currentCard.image} alt="Reference" className="max-h-48 rounded-xl object-contain mb-8 shadow-sm border border-gray-100" />
+          )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Study Progression */}
-        <div className="lg:col-span-2 bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
-           <div className="flex justify-between items-center mb-10">
-              <h3 className="text-xl font-bold text-dark">Study Progression</h3>
-              <div className="flex gap-2 bg-secondary/50 p-1 rounded-full">
-                 <button className="px-4 py-1.5 rounded-full text-xs font-bold bg-primary text-white shadow-sm">Daily</button>
-                 <button className="px-4 py-1.5 rounded-full text-xs font-bold text-muted hover:text-dark">Weekly</button>
-              </div>
-           </div>
-           <div className="flex items-end justify-between h-64 gap-2">
-              {data.progression.map((item, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-4">
-                   <div 
-                     className={`w-full rounded-t-xl transition-all duration-500 ${i === data.progression.length - 1 ? 'bg-primary' : 'bg-secondary'}`}
-                     style={{ height: `${(item.count / 100) * 100}%` }}
-                   ></div>
-                   <span className="text-xs font-bold text-muted uppercase tracking-tighter">{item.day}</span>
-                </div>
-              ))}
-           </div>
-        </div>
-
-        {/* Performance by Subject */}
-        <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm flex flex-col">
-           <h3 className="text-xl font-bold text-dark mb-8">Performance by Subject</h3>
-           <div className="flex-1 space-y-8">
-              {data.subjectPerformance.map((subject, i) => (
-                 <div key={i}>
-                    <div className="flex justify-between text-sm font-bold text-dark mb-3">
-                       <span>{subject.name}</span>
-                       <span className="text-muted">{subject.accuracy}%</span>
-                    </div>
-                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                       <div 
-                         className={`h-full rounded-full ${i === 0 ? 'bg-accent' : i === 1 ? 'bg-primary' : 'bg-green-400'}`}
-                         style={{ width: `${subject.accuracy}%` }}
-                       ></div>
-                    </div>
-                 </div>
-              ))}
-           </div>
-           <button className="mt-10 w-full py-4 rounded-xl border border-gray-100 text-sm font-bold text-muted hover:bg-gray-50 transition-colors">
-              View All Subjects
-           </button>
+          <p className="text-sm font-medium text-gray-400 italic">
+            {isFlipped ? "How well did you know this?" : "Click the card to reveal the answer"}
+          </p>
         </div>
       </div>
 
-      {/* Daily Activity Heatmap */}
-      <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm overflow-hidden">
-         <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-bold text-dark">Daily Activity</h3>
-            <div className="flex items-center gap-2 text-xs font-bold text-muted uppercase tracking-wider">
-               <span>Less</span>
-               <div className="flex gap-1">
-                  <div className="w-3 h-3 rounded-sm bg-secondary"></div>
-                  <div className="w-3 h-3 rounded-sm bg-primary/40"></div>
-                  <div className="w-3 h-3 rounded-sm bg-primary/70"></div>
-                  <div className="w-3 h-3 rounded-sm bg-primary"></div>
-               </div>
-               <span>More</span>
+      {/* Rating Buttons */}
+      <div className={`w-full max-w-lg mt-8 grid grid-cols-3 gap-4 transition-all duration-300 ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+        <button onClick={(e) => { e.stopPropagation(); handleReview(0); }} className="py-3.5 rounded-full bg-[#FFE6E6] text-[#B30000] font-bold text-sm hover:brightness-95 transition-all">
+          Hard
+        </button>
+        <button onClick={(e) => { e.stopPropagation(); handleReview(1); }} className="py-3.5 rounded-full bg-gray-200/80 text-gray-700 font-bold text-sm hover:brightness-95 transition-all">
+          Medium
+        </button>
+        <button onClick={(e) => { e.stopPropagation(); handleReview(2); }} className="py-3.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-sm hover:brightness-95 transition-all">
+          Easy
+        </button>
+      </div>
+
+      {/* Bottom Widgets */}
+      <div className="w-full grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 mt-16">
+        
+        {/* AI Insight */}
+        <div className="bg-[#FAF5F6] border border-gray-200/60 rounded-3xl p-6 flex flex-col shadow-sm relative overflow-hidden">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-[#A5D6A7] flex items-center justify-center text-[#2E7D32] shadow-sm">
+              <Sparkles size={20} />
             </div>
-         </div>
-         <div className="overflow-x-auto pb-4">
-            <div className="grid grid-flow-col grid-rows-7 gap-1.5 min-w-[800px]">
-               {/* Simplified Heatmap Logic */}
-               {Array.from({ length: 52 * 7 }).map((_, i) => {
-                  const intensity = Math.random();
-                  let bgColor = 'bg-secondary';
-                  if (intensity > 0.8) bgColor = 'bg-primary';
-                  else if (intensity > 0.6) bgColor = 'bg-primary/70';
-                  else if (intensity > 0.4) bgColor = 'bg-primary/40';
-                  
-                  return <div key={i} className={`w-4 h-4 rounded-sm ${bgColor}`}></div>
-               })}
-            </div>
-         </div>
-         <p className="mt-6 text-xs italic text-muted font-medium">Activity heatmap showing study frequency over the last 6 months.</p>
-      </div>
+            <h3 className="text-lg font-bold text-[#800020]">AI Insight</h3>
+          </div>
+          <p className="text-gray-700 font-medium text-sm leading-relaxed">
+            You typically struggle with memory-related questions in the morning. Try revisiting this card in the evening.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* AI Study Buddy Insight */}
-        <div className="bg-secondary/40 rounded-[2.5rem] p-10 border border-secondary/60 relative overflow-hidden">
-           <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <Sparkles size={18} />
-           </div>
-            <h3 className="text-xl font-bold text-dark mb-6">AI Study Buddy Insight</h3>
-            <p className="text-lg text-gray-600 leading-relaxed font-medium mb-10 italic">
-               "You tend to struggle with 'Recursive Algorithms' after 9 PM. We recommend moving this deck to your morning sessions for 25% better retention."
+        {/* Study Streak */}
+        <div className="bg-dark rounded-3xl overflow-hidden relative shadow-md group cursor-pointer">
+          <img 
+            src="https://images.unsplash.com/photo-1497250681554-18239d5e3c83?q=80&w=1000&auto=format&fit=crop" 
+            alt="Study Environment" 
+            className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent"></div>
+          <div className="relative z-10 p-8 h-full flex flex-col justify-center max-w-sm">
+            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Study Streak</h3>
+            <p className="text-white/80 font-medium text-sm leading-relaxed">
+              You've been focused for 25 minutes.<br/>Take a 5-minute breather?
             </p>
-            <div className="flex items-center gap-6">
-               <button className="bg-accent text-white px-8 py-3 rounded-full font-bold shadow-lg hover:opacity-90 transition-all">
-                  Apply Schedule
-               </button>
-               <button className="text-sm font-bold text-muted hover:text-dark">Learn More</button>
-            </div>
-         </div>
+          </div>
+        </div>
 
-         {/* Next Up for Review */}
-         <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
-            <h3 className="text-xl font-bold text-dark mb-8">Next Up for Review</h3>
-            <div className="space-y-4">
-               {data.nextReviewDecks?.length > 0 ? data.nextReviewDecks.map((deck, i) => (
-                  <Link 
-                    key={deck._id} 
-                    to={`/study/${deck._id}`}
-                    className="flex items-center justify-between p-5 rounded-2xl border border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer group"
-                  >
-                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-muted group-hover:text-accent transition-colors">
-                           <TrendingUp size={16} />
-                        </div>
-                        <div>
-                           <div className="text-sm font-bold text-dark">{deck.title}</div>
-                           <div className="text-xs font-medium text-muted">{deck.dueCount} cards • Due Today</div>
-                        </div>
-                     </div>
-                     <ChevronRight size={18} className="text-gray-300 group-hover:text-dark transition-colors" />
-                  </Link>
-               )) : (
-                  <div className="text-center py-10 text-muted font-medium border border-dashed border-gray-100 rounded-2xl">
-                     No decks due for review. Take a break!
-                  </div>
-               )}
-            </div>
-         </div>
       </div>
+
     </div>
   );
 };
-
-function StatCard({ icon, label, value, subtext, trend, progress, extraIcon, iconBg }) {
-  return (
-    <div className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden">
-      <div className="flex justify-between items-start mb-6">
-        <div className={`w-12 h-12 rounded-2xl ${iconBg} flex items-center justify-center`}>
-          {icon}
-        </div>
-        {trend && (
-          <div className="bg-green-50 text-green-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-            {trend}
-          </div>
-        )}
-      </div>
-      <div className="text-xs font-bold text-muted uppercase tracking-widest mb-1">{label}</div>
-      <div className="flex items-center gap-2 mb-4">
-         <span className="text-4xl font-bold text-dark tracking-tighter">{value}</span>
-         {extraIcon && <span className="text-3xl">{extraIcon}</span>}
-      </div>
-      <p className="text-xs font-semibold text-muted tracking-tight">{subtext}</p>
-      
-      {progress !== undefined && (
-        <div className="mt-6 h-1 w-full bg-gray-50 rounded-full overflow-hidden">
-          <div className="h-full bg-primary rounded-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default Dashboard;

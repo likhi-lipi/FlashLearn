@@ -29,9 +29,9 @@ const Navbar = () => {
             Find Flashcards
             <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/browse') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
           </Link>
-          <Link to="/generate" className={`transition-colors relative group py-1 ${isActive('/generate') ? 'text-primary' : 'hover:text-primary'}`}>
+          <Link to="/make" className={`transition-colors relative group py-1 ${isActive('/make') ? 'text-primary' : 'hover:text-primary'}`}>
             Make Flashcards
-            <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/generate') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+            <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/make') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
           </Link>
           <Link to="/dashboard" className={`transition-colors relative group py-1 ${isActive('/dashboard') ? 'text-primary' : 'hover:text-primary'}`}>
             Dashboard

@@ -47,13 +47,13 @@ router.get('/study/:deckId', auth, async (req, res) => {
 // @desc    Create a card
 // @access  Private
 router.post('/', auth, async (req, res) => {
-  const { deck, question, answer, tags } = req.body;
+  const { deck, question, answer, tags, image } = req.body;
   try {
     const deckObj = await Deck.findById(deck);
     if (!deckObj) return res.status(404).json({ msg: 'Deck not found' });
     if (deckObj.user.toString() !== req.user.id) return res.status(401).json({ msg: 'Not authorized' });
 
-    const newCard = new Card({ deck, question, answer, tags });
+    const newCard = new Card({ deck, question, answer, tags, image });
     const card = await newCard.save();
     res.json(card);
   } catch (err) {
