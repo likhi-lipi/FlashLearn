@@ -7,13 +7,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#fdf6f4',
-        foreground: '#4a2c2a',
-        primary: '#e3979d',
-        secondary: '#f3e8e4',
-        accent: '#f9e8e6',
-        dark: '#1e1b1b',
-        'green-light': '#eef6f1',
+        background: '#FAF5F6',
+        primary: '#800020',
+        accent: '#800020',
+        secondary: '#FCE4EC',
+        dark: '#1A1A1A',
+        muted: '#4A4A4A',
+        'voice-bg': '#FDF2F4',
+        'voice-icon': '#800020'
       },
       fontFamily: {
         sans: ['"Outfit"', '"Inter"', 'system-ui', 'sans-serif'],
@@ -22,4 +23,4 @@ export default {
     },
   },
   plugins: [],
-}
+};

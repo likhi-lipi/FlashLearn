@@ -1,49 +1,71 @@
 import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { User } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <nav className="bg-[#fdf6f4] py-6 px-10 sticky top-0 z-50">
+    <nav className="bg-background/90 backdrop-blur-md text-dark py-6 px-6 fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto flex justify-between items-center max-w-7xl">
-        <div className="flex items-center space-x-16">
-          {/* Logo */}
-          <Link to="/" className="text-[#4a2c2a] font-bold text-3xl tracking-tight">
-            FlashLearn
+        {/* Logo */}
+        <Link to="/" className="flex items-center space-x-2 font-bold text-[1.75rem] tracking-tight text-accent">
+          <span>FlashLearn</span>
+        </Link>
+        
+        {/* Links */}
+        <div className="hidden lg:flex items-center space-x-10 text-[15px] font-bold text-[#4A4A4A]">
+          <Link to="/browse" className={`transition-colors relative group py-1 ${isActive('/browse') ? 'text-primary' : 'hover:text-primary'}`}>
+            Find Flashcards
+            <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/browse') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
           </Link>
-          
-          {/* Nav Links */}
-          <div className="hidden lg:flex items-center space-x-10 text-[15px] font-semibold text-[#4a2c2a]/80">
-            <Link to="/browse" className="hover:text-[#4a2c2a] border-b-2 border-transparent hover:border-[#e3979d] transition-all pb-1">Find Flashcards</Link>
-            <Link to="/generate" className="hover:text-[#4a2c2a] border-b-2 border-transparent hover:border-[#e3979d] transition-all pb-1">Make Flashcards</Link>
-            <Link to="/dashboard" className="hover:text-[#4a2c2a] border-b-2 border-transparent hover:border-[#e3979d] transition-all pb-1">Dashboard</Link>
-            <Link to="/generate" className="hover:text-[#4a2c2a] border-b-2 border-transparent hover:border-[#e3979d] transition-all pb-1">AI Generator</Link>
-          </div>
+          <Link to="/make" className={`transition-colors relative group py-1 ${isActive('/make') ? 'text-primary' : 'hover:text-primary'}`}>
+            Make Flashcards
+            <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/make') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+          </Link>
+          <Link to="/dashboard" className={`transition-colors relative group py-1 ${isActive('/dashboard') ? 'text-primary' : 'hover:text-primary'}`}>
+            Dashboard
+            <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/dashboard') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+          </Link>
+          <Link to="/generate" className={`transition-colors relative group py-1 ${isActive('/generate') ? 'text-primary' : 'hover:text-primary'}`}>
+            AI Generator
+            <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/generate') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+          </Link>
         </div>
         
-        <div className="flex items-center space-x-6 text-[15px] font-semibold text-[#4a2c2a]">
+        {/* Auth Actions */}
+        <div className="flex items-center space-x-8 font-bold text-[15px]">
           {user ? (
-            <div className="flex items-center space-x-6">
-              <Link to="/profile" className="hover:opacity-70 transition-opacity">Profile</Link>
+            <div className="flex items-center space-x-8">
+              <Link to="/profile" className="flex items-center space-x-2 text-[#4A4A4A] hover:text-accent transition-colors">
+                <span>Profile</span>
+              </Link>
               <button 
                 onClick={handleLogout}
-                className="bg-[#4a2c2a] text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all shadow-sm"
+                className="bg-primary text-white px-6 py-2.5 rounded-lg hover:opacity-90 transition-all shadow-sm"
               >
                 Logout
               </button>
             </div>
           ) : (
-            <div className="flex items-center space-x-6">
-              <Link to="/login" className="hover:opacity-70 transition-opacity">Login</Link>
-              <Link to="/login" className="bg-[#4a2c2a] text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all shadow-sm">Sign Up</Link>
+            <div className="flex items-center space-x-8">
+              <Link to="/login" className="text-[#4A4A4A] hover:text-primary transition-colors">Log in</Link>
+              <Link 
+                to="/login" 
+                className="bg-primary text-white px-7 py-3 rounded-full hover:opacity-95 transition-all shadow-md shadow-dark/10"
+              >
+                Get Started
+              </Link>
             </div>
           )}
         </div>
