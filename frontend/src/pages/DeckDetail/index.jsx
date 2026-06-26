@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../../api/axios';
-import { ArrowLeft, Trash2, Plus, Volume2, Mic, Check, Layers, HelpCircle, Edit3 } from 'lucide-react';
+import { ArrowLeft, Trash2, Plus, Volume2, Mic, Check, Layers, HelpCircle, Edit3, Zap } from 'lucide-react';
 
 const DeckDetail = () => {
   const { id } = useParams();
