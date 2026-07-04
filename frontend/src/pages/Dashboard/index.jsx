@@ -1,203 +1,176 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../api/axios';
-import { Lightbulb, Sparkles } from 'lucide-react';
+import { AuthContext } from '../../context/AuthContext';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import { Bar, Doughnut } from 'react-chartjs-2';
+import { Plus, BookOpen, Trash2 } from 'lucide-react';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const Dashboard = () => {
-  const [deck, setDeck] = useState(null);
-  const [cards, setCards] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const [decks, setDecks] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
+  const [showNewDeck, setShowNewDeck] = useState(false);
+  const [newDeckTitle, setNewDeckTitle] = useState('');
+  const [newDeckDesc, setNewDeckDesc] = useState('');
 
   useEffect(() => {
-    fetchStudyData();
+    fetchData();
   }, []);
 
-  const fetchStudyData = async () => {
+  const fetchData = async () => {
     try {
-      setLoading(true);
-      const decksRes = await api.get('/decks');
-      const decks = decksRes.data;
-      
-      if (decks.length > 0) {
-        // Find a deck that has cards
-        let selectedDeck = null;
-        let studyCards = [];
-        
-        for (let d of decks) {
-          if (d.cardCount > 0) {
-            // First try due cards
-            let res = await api.get(`/cards/study/${d._id}`);
-            if (res.data.length > 0) {
-              selectedDeck = d;
-              studyCards = res.data;
-              break;
-            }
-          }
-        }
-        
-        // If no due cards, just pick the first deck with any cards
-        if (!selectedDeck) {
-          const deckWithCards = decks.find(d => d.cardCount > 0);
-          if (deckWithCards) {
-            selectedDeck = deckWithCards;
-            const res = await api.get(`/cards/deck/${deckWithCards._id}`);
-            studyCards = res.data;
-          }
-        }
-        
-        setDeck(selectedDeck);
-        setCards(studyCards);
-      }
-      setLoading(false);
+      const [decksRes, analyticsRes] = await Promise.all([
+        api.get('/decks'),
+        api.get('/analytics')
+      ]);
+      setDecks(decksRes.data);
+      setAnalytics(analyticsRes.data);
     } catch (err) {
-      console.error("Error fetching study data", err);
-      setLoading(false);
+      console.error(err);
     }
   };
 
-  const handleReview = async (quality) => {
-    if (cards.length === 0 || currentIndex >= cards.length) return;
-    
+  const handleCreateDeck = async (e) => {
+    e.preventDefault();
     try {
-      const currentCard = cards[currentIndex];
-      await api.put(`/cards/${currentCard._id}/review`, { quality });
-      
-      // Move to next card
-      if (currentIndex < cards.length - 1) {
-        setIsFlipped(false);
-        setCurrentIndex(prev => prev + 1);
-      } else {
-        // Finished deck session
-        setCards([]);
-      }
+      await api.post('/decks', { title: newDeckTitle, description: newDeckDesc });
+      setShowNewDeck(false);
+      setNewDeckTitle('');
+      setNewDeckDesc('');
+      fetchData();
     } catch (err) {
-      console.error("Failed to submit review", err);
+      console.error(err);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  const handleDeleteDeck = async (id) => {
+    if(window.confirm('Are you sure you want to delete this deck?')) {
+      try {
+        await api.delete(`/decks/${id}`);
+        fetchData();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
 
-  if (!deck || cards.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-        <div className="w-24 h-24 bg-white rounded-3xl shadow-sm border border-gray-100 flex items-center justify-center text-4xl">
-          🎉
-        </div>
-        <div>
-          <h2 className="text-3xl font-bold text-dark mb-2">You're all caught up!</h2>
-          <p className="text-muted font-medium text-lg max-w-md mx-auto">No cards due for review right now. Take a break or create some new flashcards.</p>
-        </div>
-        <button 
-          onClick={() => navigate('/make')}
-          className="bg-primary text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all hover:-translate-y-0.5"
-        >
-          Make New Flashcards
-        </button>
-      </div>
-    );
-  }
-
-  const currentCard = cards[currentIndex];
-  const progressPercent = ((currentIndex + 1) / cards.length) * 100;
+  const chartData = analytics ? {
+    labels: ['New', 'Hard', 'Medium', 'Easy'],
+    datasets: [
+      {
+        data: [
+          analytics.difficultyBreakdown.new,
+          analytics.difficultyBreakdown.hard,
+          analytics.difficultyBreakdown.medium,
+          analytics.difficultyBreakdown.easy
+        ],
+        backgroundColor: ['#888888', '#CF6679', '#F6A500', '#03DAC6'],
+        borderWidth: 0,
+      },
+    ],
+  } : null;
 
   return (
-    <div className="w-full max-w-[900px] mx-auto pt-8 pb-20 flex flex-col items-center">
-      
-      {/* Header section */}
-      <div className="w-full flex justify-between items-end mb-8 px-2">
-        <div>
-          <p className="text-[11px] font-bold text-muted tracking-widest uppercase mb-1">Currently Studying</p>
-          <h1 className="text-3xl font-bold text-dark tracking-tight">{deck.title}</h1>
-        </div>
-        <div className="flex flex-col items-end gap-2 w-48">
-          <span className="text-xs font-bold text-muted">Progress: {currentIndex + 1}/{cards.length} cards</span>
-          <div className="w-full h-2 bg-gray-200/60 rounded-full overflow-hidden">
-            <div className="h-full bg-[#8A5A6B] rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Flashcard */}
-      <div 
-        className="w-full min-h-[420px] bg-white rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-10 flex flex-col relative cursor-pointer group transition-all hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
-        onClick={() => setIsFlipped(!isFlipped)}
-      >
-        <Lightbulb className="absolute top-8 right-8 text-gray-300 group-hover:text-yellow-400 transition-colors" size={24} />
-        
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-4 md:px-12">
-          <span className="text-[11px] font-bold text-muted uppercase tracking-widest mb-6">
-            {isFlipped ? 'ANSWER' : 'QUESTION'}
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-dark leading-tight tracking-tight mb-8 whitespace-pre-wrap">
-            {isFlipped ? currentCard.answer : currentCard.question}
-          </h2>
-          
-          {isFlipped && currentCard.image && (
-            <img src={currentCard.image} alt="Reference" className="max-h-48 rounded-xl object-contain mb-8 shadow-sm border border-gray-100" />
-          )}
-
-          <p className="text-sm font-medium text-gray-400 italic">
-            {isFlipped ? "How well did you know this?" : "Click the card to reveal the answer"}
-          </p>
-        </div>
-      </div>
-
-      {/* Rating Buttons */}
-      <div className={`w-full max-w-lg mt-8 grid grid-cols-3 gap-4 transition-all duration-300 ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-        <button onClick={(e) => { e.stopPropagation(); handleReview(0); }} className="py-3.5 rounded-full bg-[#FFE6E6] text-[#B30000] font-bold text-sm hover:brightness-95 transition-all">
-          Hard
-        </button>
-        <button onClick={(e) => { e.stopPropagation(); handleReview(1); }} className="py-3.5 rounded-full bg-gray-200/80 text-gray-700 font-bold text-sm hover:brightness-95 transition-all">
-          Medium
-        </button>
-        <button onClick={(e) => { e.stopPropagation(); handleReview(2); }} className="py-3.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-sm hover:brightness-95 transition-all">
-          Easy
+    <div className="space-y-8 pt-24 pb-12 w-full max-w-6xl mx-auto text-dark dark:text-gray-100 transition-colors">
+      <div className="flex justify-between items-center px-2">
+        <h1 className="text-4xl font-bold">Hello, {user?.username}</h1>
+        <button 
+          onClick={() => setShowNewDeck(true)}
+          className="bg-primary text-white font-bold px-5 py-2.5 rounded-lg flex items-center space-x-2 hover:opacity-90 transition-all shadow-md"
+        >
+          <Plus size={20} /> <span>New Deck</span>
         </button>
       </div>
 
-      {/* Bottom Widgets */}
-      <div className="w-full grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 mt-16">
-        
-        {/* AI Insight */}
-        <div className="bg-[#FAF5F6] border border-gray-200/60 rounded-3xl p-6 flex flex-col shadow-sm relative overflow-hidden">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[#A5D6A7] flex items-center justify-center text-[#2E7D32] shadow-sm">
-              <Sparkles size={20} />
+      {showNewDeck && (
+        <div className="bg-white/50 dark:bg-white/5 backdrop-blur-md p-6 rounded-xl border border-gray-200 dark:border-white/10 shadow-lg mx-2 transition-colors">
+          <h2 className="text-xl font-bold mb-4">Create New Deck</h2>
+          <form onSubmit={handleCreateDeck} className="space-y-4">
+            <div>
+              <input 
+                type="text" 
+                placeholder="Deck Title" 
+                value={newDeckTitle}
+                onChange={(e) => setNewDeckTitle(e.target.value)}
+                className="w-full bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:border-primary dark:focus:border-[#e3979d] outline-none transition-colors"
+                required
+              />
             </div>
-            <h3 className="text-lg font-bold text-[#800020]">AI Insight</h3>
-          </div>
-          <p className="text-gray-700 font-medium text-sm leading-relaxed">
-            You typically struggle with memory-related questions in the morning. Try revisiting this card in the evening.
-          </p>
+            <div>
+              <input 
+                type="text" 
+                placeholder="Description (optional)" 
+                value={newDeckDesc}
+                onChange={(e) => setNewDeckDesc(e.target.value)}
+                className="w-full bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:border-primary dark:focus:border-[#e3979d] outline-none transition-colors"
+              />
+            </div>
+            <div className="flex space-x-4">
+              <button type="submit" className="bg-primary text-white font-bold px-6 py-2.5 rounded-lg hover:opacity-90 transition-all">Create</button>
+              <button type="button" onClick={() => setShowNewDeck(false)} className="bg-gray-700 text-white font-bold px-6 py-2.5 rounded-lg hover:bg-gray-600 transition-all">Cancel</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      <div className="grid md:grid-cols-3 gap-6 px-2">
+        <div className="md:col-span-2 bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-sm transition-colors">
+          <h2 className="text-2xl font-bold mb-6 border-b border-gray-100 dark:border-white/10 pb-4">Your Decks</h2>
+          {decks.length === 0 ? (
+            <p className="text-gray-500 dark:text-gray-400 text-lg">You don't have any decks yet. Create one to start learning!</p>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-4">
+              {decks.map(deck => (
+                <div key={deck._id} className="bg-[#FAF7F8] dark:bg-[#121212] border border-gray-200 dark:border-white/10 p-5 rounded-xl hover:border-primary dark:hover:border-[#e3979d] transition-all group relative shadow-sm hover:shadow-md">
+                  <button onClick={() => handleDeleteDeck(deck._id)} className="absolute top-3 right-3 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-2">
+                    <Trash2 size={18} />
+                  </button>
+                  <h3 className="text-xl font-bold mb-2 pr-6 truncate">{deck.title}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-5 h-10 overflow-hidden">{deck.description || 'No description'}</p>
+                  <div className="flex justify-between items-center mt-auto">
+                    <span className="text-xs font-bold bg-white dark:bg-white/10 px-3 py-1.5 rounded-full border border-gray-100 dark:border-transparent">{deck.cardCount} cards</span>
+                    <div className="space-x-3 flex items-center">
+                      <Link to={`/deck/${deck._id}`} className="text-sm font-bold text-gray-500 hover:text-dark dark:hover:text-white transition-colors">Manage</Link>
+                      <Link to={`/study/${deck._id}`} className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg inline-flex items-center space-x-1.5 hover:opacity-90 transition-all">
+                        <BookOpen size={16} /> <span>Study</span>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Study Streak */}
-        <div className="bg-dark rounded-3xl overflow-hidden relative shadow-md group cursor-pointer">
-          <img 
-            src="https://images.unsplash.com/photo-1497250681554-18239d5e3c83?q=80&w=1000&auto=format&fit=crop" 
-            alt="Study Environment" 
-            className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700" 
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent"></div>
-          <div className="relative z-10 p-8 h-full flex flex-col justify-center max-w-sm">
-            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Study Streak</h3>
-            <p className="text-white/80 font-medium text-sm leading-relaxed">
-              You've been focused for 25 minutes.<br/>Take a 5-minute breather?
-            </p>
-          </div>
+        <div className="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-sm space-y-8 transition-colors">
+          <h2 className="text-2xl font-bold border-b border-gray-100 dark:border-white/10 pb-4">Analytics</h2>
+          {analytics ? (
+            <>
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div className="bg-[#FAF7F8] dark:bg-[#121212] p-5 rounded-xl border border-gray-200 dark:border-white/10 flex flex-col justify-center transition-colors">
+                  <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Total Cards</p>
+                  <p className="text-4xl font-black text-primary dark:text-[#e3979d]">{analytics.totalCards}</p>
+                </div>
+                <div className="bg-[#FAF7F8] dark:bg-[#121212] p-5 rounded-xl border border-gray-200 dark:border-white/10 flex flex-col justify-center transition-colors">
+                  <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Day Streak</p>
+                  <p className="text-4xl font-black text-primary dark:text-[#e3979d]">{analytics.streak}🔥</p>
+                </div>
+              </div>
+              <div className="pt-4">
+                <p className="text-sm font-bold text-gray-500 dark:text-gray-400 text-center mb-4 uppercase tracking-wider">Knowledge Mastery</p>
+                <div className="w-56 h-56 mx-auto">
+                  <Doughnut data={chartData} options={{ cutout: '75%', plugins: { legend: { position: 'bottom', labels: { color: '#a3a3a3', font: { size: 12, weight: 'bold' } } } } }} />
+                </div>
+              </div>
+            </>
+          ) : (
+            <p className="text-gray-400">Loading analytics...</p>
+          )}
         </div>
-
       </div>
-
     </div>
   );
 };

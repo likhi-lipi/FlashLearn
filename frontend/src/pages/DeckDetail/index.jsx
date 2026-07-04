@@ -91,7 +91,7 @@ const DeckDetail = () => {
   );
 
   return (
-    <div className="space-y-10 max-w-5xl mx-auto pb-20 animate-fade-in font-['Outfit']">
+    <div className="pt-24 space-y-10 max-w-5xl mx-auto pb-20 animate-fade-in font-['Outfit']">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-center gap-8 bg-white p-10 rounded-[3rem] border border-[#f3e8e4] shadow-sm relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#f9e8e6] rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 opacity-50"></div>

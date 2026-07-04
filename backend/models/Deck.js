@@ -13,6 +13,10 @@ const DeckSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  category: {
+    type: String,
+    default: 'General'
+  },
   createdAt: {
     type: Date,
     default: Date.now

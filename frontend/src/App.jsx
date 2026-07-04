@@ -12,6 +12,8 @@ import StudyMode from './pages/StudyMode/index';
 import AIGenerator from './pages/AIGenerator/index';
 import MakeFlashcards from './pages/MakeFlashcards/index';
 import BrowseDecks from './pages/BrowseDecks';
+import Profile from './pages/Profile/index';
+import RapidRound from './pages/RapidRound/index';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -36,6 +38,8 @@ function App() {
           <Route path="/browse" element={<ProtectedRoute><div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><BrowseDecks type="all" title="Browse All Subjects" /></div></ProtectedRoute>} />
           <Route path="/popular" element={<ProtectedRoute><div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><BrowseDecks type="popular" title="Most Popular Decks" /></div></ProtectedRoute>} />
           <Route path="/recent" element={<ProtectedRoute><div className="container mx-auto px-4 pt-2 pb-8 max-w-7xl flex-1"><BrowseDecks type="recent" title="Recently Added Decks" /></div></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><div className="container mx-auto pt-2 pb-8 max-w-7xl flex-1"><Profile /></div></ProtectedRoute>} />
+          <Route path="/rapid-round" element={<ProtectedRoute><div className="flex-1 flex flex-col w-full"><RapidRound /></div></ProtectedRoute>} />
         </Routes>
         <Footer />
       </div>

@@ -12,7 +12,7 @@ router.get('/deck/:deckId', auth, async (req, res) => {
     // Check if deck exists and belongs to user
     const deck = await Deck.findById(req.params.deckId);
     if (!deck) return res.status(404).json({ msg: 'Deck not found' });
-    if (deck.user.toString() !== req.user.id) return res.status(401).json({ msg: 'Not authorized' });
+    // if (deck.user.toString() !== req.user.id) return res.status(401).json({ msg: 'Not authorized' });
 
     const cards = await Card.find({ deck: req.params.deckId });
     res.json(cards);
@@ -29,7 +29,8 @@ router.get('/study/:deckId', auth, async (req, res) => {
   try {
     const deck = await Deck.findById(req.params.deckId);
     if (!deck) return res.status(404).json({ msg: 'Deck not found' });
-    if (deck.user.toString() !== req.user.id) return res.status(401).json({ msg: 'Not authorized' });
+    // Allow studying any public deck in the library (removed strict ownership check)
+    // if (deck.user.toString() !== req.user.id) return res.status(401).json({ msg: 'Not authorized' });
 
     const currentDate = new Date();
     const cards = await Card.find({ 

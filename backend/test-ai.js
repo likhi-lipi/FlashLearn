@@ -1,9 +1,9 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
+require('dotenv').config();
 const keys = [
-  "AIzaSyAVJ5M65PXVN17n-Ji22peOaWFPIdhollI",
-  "AIzaSyDrnFUageIFO3S5GOuPRY3YI4H4lfKRL9I"
-];
+  process.env.GEMINI_API_KEY_1
+].filter(Boolean);
 
 async function test() {
   for (const key of keys) {

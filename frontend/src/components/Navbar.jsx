@@ -16,15 +16,15 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-background/90 backdrop-blur-md text-dark py-6 px-6 fixed top-0 left-0 right-0 z-50">
+    <nav className="bg-background/95 backdrop-blur-md text-[#4A4A4A] py-6 px-6 fixed top-0 left-0 right-0 z-50 shadow-sm shadow-[#800020]/5 border-b border-[#e3979d]/20">
       <div className="container mx-auto flex justify-between items-center max-w-7xl">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2 font-bold text-[1.75rem] tracking-tight text-accent">
+        <Link to="/" className="flex items-center space-x-2 font-bold text-[1.75rem] tracking-tight text-primary">
           <span>FlashLearn</span>
         </Link>
         
         {/* Links */}
-        <div className="hidden lg:flex items-center space-x-10 text-[15px] font-bold text-[#4A4A4A]">
+        <div className="hidden lg:flex items-center space-x-10 text-[15px] font-bold text-[#4a2c2a]">
           <Link to="/browse" className={`transition-colors relative group py-1 ${isActive('/browse') ? 'text-primary' : 'hover:text-primary'}`}>
             Find Flashcards
             <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/browse') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
@@ -47,7 +47,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-8 font-bold text-[15px]">
           {user ? (
             <div className="flex items-center space-x-8">
-              <Link to="/profile" className="flex items-center space-x-2 text-[#4A4A4A] hover:text-accent transition-colors">
+              <Link to="/profile" className="flex items-center space-x-2 text-[#4a2c2a] hover:text-primary transition-colors">
                 <span>Profile</span>
               </Link>
               <button 
@@ -59,10 +59,10 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex items-center space-x-8">
-              <Link to="/login" className="text-[#4A4A4A] hover:text-primary transition-colors">Log in</Link>
+              <Link to="/login" className="text-[#4a2c2a] hover:text-primary transition-colors">Log in</Link>
               <Link 
                 to="/login" 
-                className="bg-primary text-white px-7 py-3 rounded-full hover:opacity-95 transition-all shadow-md shadow-dark/10"
+                className="bg-primary text-white px-7 py-3 rounded-full hover:opacity-95 transition-all shadow-md shadow-primary/20"
               >
                 Get Started
               </Link>
