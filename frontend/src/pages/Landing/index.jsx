@@ -61,7 +61,7 @@ const Landing = () => {
 
           {/* Right Side: Mockup Illustration */}
           <div className="lg:w-1/2 relative flex justify-center w-full">
-             <div className="relative z-10 w-full max-w-[580px] aspect-[1.3] bg-white dark:bg-[#1e1e1e] rounded-[2.5rem] shadow-[0_40px_80px_-15px_rgba(233,170,182,0.3)] dark:shadow-none border-[14px] border-white dark:border-[#1e1e1e] overflow-hidden transition-colors">
+             <div className="relative z-10 w-full max-w-[580px] aspect-[1.3] bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-[2.5rem] shadow-[0_40px_80px_-15px_rgba(233,170,182,0.3)] dark:shadow-none border-[14px] border-white dark:border-[#1e1e1e] overflow-hidden transition-colors">
                 <div className="w-full h-full bg-[#FAF5F6] dark:bg-[#121212] p-8 flex flex-col gap-6 transition-colors">
                    <div className="flex justify-between items-center">
                       <div className="flex items-center gap-3">
@@ -70,17 +70,17 @@ const Landing = () => {
                          </div>
                          <div className="h-5 w-32 bg-gray-200/60 dark:bg-gray-800 rounded-full transition-colors"></div>
                       </div>
-                      <div className="w-12 h-12 rounded-full bg-white dark:bg-[#1e1e1e] shadow-sm border border-gray-100 dark:border-white/10 transition-colors"></div>
+                      <div className="w-12 h-12 rounded-full bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] shadow-sm border border-gray-100 dark:border-white/10 transition-colors"></div>
                    </div>
                    <div className="grid grid-cols-2 gap-5">
-                      <div className="h-40 rounded-[2rem] bg-white dark:bg-[#1e1e1e] shadow-sm border border-gray-50 dark:border-white/10 p-6 transition-colors">
+                      <div className="h-40 rounded-[2rem] bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] shadow-sm border border-gray-50 dark:border-white/10 p-6 transition-colors">
                          <div className="w-10 h-10 rounded-full bg-blue-50/50 dark:bg-blue-500/20 mb-6 flex items-center justify-center">
                             <div className="w-5 h-5 rounded-full bg-blue-300 dark:bg-blue-500"></div>
                          </div>
                          <div className="h-3 w-3/4 bg-gray-100 dark:bg-gray-800 rounded-full mb-3 transition-colors"></div>
                          <div className="h-3 w-1/2 bg-gray-50 dark:bg-gray-800/60 rounded-full transition-colors"></div>
                       </div>
-                      <div className="h-40 rounded-[2rem] bg-white dark:bg-[#1e1e1e] shadow-sm border border-gray-50 dark:border-white/10 p-6 transition-colors">
+                      <div className="h-40 rounded-[2rem] bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] shadow-sm border border-gray-50 dark:border-white/10 p-6 transition-colors">
                          <div className="w-10 h-10 rounded-full bg-pink-50/50 dark:bg-pink-500/20 mb-6 flex items-center justify-center">
                             <div className="w-5 h-5 rounded-full bg-pink-300 dark:bg-pink-500"></div>
                          </div>
@@ -88,7 +88,7 @@ const Landing = () => {
                          <div className="h-3 w-1/2 bg-gray-50 dark:bg-gray-800/60 rounded-full transition-colors"></div>
                       </div>
                    </div>
-                   <div className="flex-1 rounded-[2rem] bg-white dark:bg-[#1e1e1e] shadow-sm border border-gray-50 dark:border-white/10 p-8 transition-colors">
+                   <div className="flex-1 rounded-[2rem] bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] shadow-sm border border-gray-50 dark:border-white/10 p-8 transition-colors">
                       <div className="h-5 w-40 bg-gray-100 dark:bg-gray-800 rounded-full mb-8 transition-colors"></div>
                       <div className="space-y-6">
                          {[1,2,3].map(i => (
@@ -114,7 +114,7 @@ const Landing = () => {
       <section className="container mx-auto px-6 py-20 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Spaced Repetition Card */}
-          <div className="md:col-span-2 bg-white dark:bg-[#1e1e1e] rounded-[3rem] p-16 shadow-sm border border-gray-100/50 dark:border-white/10 relative overflow-hidden group transition-colors">
+          <div className="md:col-span-2 bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-[3rem] p-16 shadow-sm border border-gray-100/50 dark:border-white/10 relative overflow-hidden group transition-colors">
             <div className="relative z-10">
               <div className="w-16 h-16 rounded-[1.5rem] bg-secondary dark:bg-[#2a2a2a] flex items-center justify-center mb-10 transition-colors">
                 <Zap className="text-primary dark:text-[#e3979d]" size={32} />
@@ -172,7 +172,7 @@ const Landing = () => {
              </div>
              <div className="lg:w-1/2 grid grid-cols-2 gap-4 w-full">
                 {['Medicine', 'Law', 'Coding', 'History'].map(tag => (
-                   <div key={tag} className="bg-white dark:bg-[#2a2a2a] py-6 rounded-2xl text-center font-bold text-gray-700 dark:text-gray-200 shadow-sm border border-gray-50 dark:border-white/5 transition-colors">
+                   <div key={tag} className="bg-white dark:bg-[#1e1e1e] dark:bg-[#2a2a2a] py-6 rounded-2xl text-center font-bold text-gray-700 dark:text-gray-200 shadow-sm border border-gray-50 dark:border-white/5 transition-colors">
                       {tag}
                    </div>
                 ))}
@@ -201,7 +201,7 @@ const Landing = () => {
                   </Link>
                   <Link 
                     to="/pricing" 
-                    className="bg-transparent hover:bg-white/5 transition-all text-white font-bold text-xl px-16 py-6 rounded-full border-2 border-white/10"
+                    className="bg-transparent hover:bg-white dark:bg-[#1e1e1e]/5 transition-all text-white font-bold text-xl px-16 py-6 rounded-full border-2 border-white/10"
                   >
                     View Pricing
                   </Link>

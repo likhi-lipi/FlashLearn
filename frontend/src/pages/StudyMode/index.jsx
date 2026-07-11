@@ -81,7 +81,7 @@ const StudyMode = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-10 pb-24 pt-10 flex flex-col min-h-[calc(100vh-160px)] text-dark dark:text-gray-100 transition-colors">
       <div className="flex justify-between items-center">
-        <Link to="/dashboard" className="w-12 h-12 rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-100 dark:border-white/10 flex items-center justify-center text-muted dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors shadow-sm">
+        <Link to="/dashboard" className="w-12 h-12 rounded-full bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] border border-gray-100 dark:border-white/10 flex items-center justify-center text-muted dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors shadow-sm">
           <ArrowLeft size={20} />
         </Link>
         <div className="flex flex-col items-center">
@@ -90,7 +90,7 @@ const StudyMode = () => {
              Card {currentIndex + 1} <span className="text-muted/40 dark:text-gray-600 px-1">/</span> {cards.length}
            </div>
         </div>
-        <div className="w-12 h-12 rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-100 dark:border-white/10 flex items-center justify-center text-muted dark:text-gray-400 transition-colors">
+        <div className="w-12 h-12 rounded-full bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] border border-gray-100 dark:border-white/10 flex items-center justify-center text-muted dark:text-gray-400 transition-colors">
            <RotateCcw size={18} />
         </div>
       </div>
@@ -108,7 +108,7 @@ const StudyMode = () => {
           onClick={() => !isFlipped && setIsFlipped(true)}
         >
           {/* Front */}
-          <div className="absolute inset-0 w-full h-full backface-hidden bg-white dark:bg-[#1e1e1e] rounded-[3rem] p-12 flex flex-col items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-white/10 overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all">
+          <div className="absolute inset-0 w-full h-full backface-hidden bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-[3rem] p-12 flex flex-col items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-white/10 overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all">
             <button 
               onClick={(e) => { e.stopPropagation(); playTTS(currentCard.question); }}
               className="absolute top-8 right-8 w-12 h-12 rounded-full bg-gray-50 dark:bg-[#2a2a2a] flex items-center justify-center text-muted dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors"
@@ -125,7 +125,7 @@ const StudyMode = () => {
           </div>
 
           {/* Back */}
-          <div className="absolute inset-0 w-full h-full backface-hidden bg-white dark:bg-[#1e1e1e] rounded-[3rem] p-12 flex flex-col items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-white/10 rotate-y-180 overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all">
+          <div className="absolute inset-0 w-full h-full backface-hidden bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-[3rem] p-12 flex flex-col items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-white/10 rotate-y-180 overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all">
             <button 
               onClick={(e) => { e.stopPropagation(); playTTS(currentCard.answer); }}
               className="absolute top-8 right-8 w-12 h-12 rounded-full bg-gray-50 dark:bg-[#2a2a2a] flex items-center justify-center text-muted dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors"

@@ -13,13 +13,13 @@ const Footer = () => {
               AI-powered flashcards for smarter learning.
             </p>
             <div className="flex items-center gap-4 mt-2">
-              <a href="#" className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all text-[#fdf6f4]">
+              <a href="#" className="p-2 rounded-full bg-white dark:bg-[#1e1e1e]/10 hover:bg-white dark:bg-[#1e1e1e]/20 transition-all text-[#fdf6f4]">
                 <Github size={18} />
               </a>
-              <a href="#" className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all text-[#fdf6f4]">
+              <a href="#" className="p-2 rounded-full bg-white dark:bg-[#1e1e1e]/10 hover:bg-white dark:bg-[#1e1e1e]/20 transition-all text-[#fdf6f4]">
                 <Linkedin size={18} />
               </a>
-              <a href="#" className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all text-[#fdf6f4]">
+              <a href="#" className="p-2 rounded-full bg-white dark:bg-[#1e1e1e]/10 hover:bg-white dark:bg-[#1e1e1e]/20 transition-all text-[#fdf6f4]">
                 <Twitter size={18} />
               </a>
             </div>

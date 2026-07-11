@@ -74,15 +74,15 @@ const RapidRound = () => {
       <div className="max-w-2xl w-full mx-auto px-6">
         
         {status === 'idle' && (
-          <div className="bg-white rounded-[3rem] p-12 text-center border border-[#e3979d]/20 shadow-sm relative overflow-hidden">
+          <div className="bg-white dark:bg-[#1e1e1e] rounded-[3rem] p-12 text-center border border-[#e3979d]/20 dark:border-white/10 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#fce4ec] rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 opacity-60"></div>
             
-            <div className="w-24 h-24 bg-[#fdf6f4] border-4 border-white shadow-xl shadow-[#e3979d]/20 text-[#e3979d] rounded-full flex items-center justify-center mx-auto mb-8 relative z-10">
+            <div className="w-24 h-24 bg-[#fdf6f4] dark:bg-[#121212] border-4 border-white shadow-xl shadow-[#e3979d]/20 text-[#e3979d] rounded-full flex items-center justify-center mx-auto mb-8 relative z-10">
               <Zap size={48} className="animate-pulse" />
             </div>
             
-            <h1 className="text-4xl font-extrabold text-[#4a2c2a] mb-4 relative z-10">Rapid Round Challenge</h1>
-            <p className="text-[#4a2c2a]/70 font-medium text-lg mb-10 max-w-md mx-auto relative z-10">
+            <h1 className="text-4xl font-extrabold text-[#4a2c2a] dark:text-gray-100 mb-4 relative z-10">Rapid Round Challenge</h1>
+            <p className="text-[#4a2c2a]/70 dark:text-gray-400 font-medium text-lg mb-10 max-w-md mx-auto relative z-10">
               Test your reflexes! You have exactly 60 seconds to answer as many flashcards as you can. Ready to set a new high score?
             </p>
             
@@ -93,7 +93,7 @@ const RapidRound = () => {
               Start 60s Challenge <ArrowRight size={24} />
             </button>
             
-            <button onClick={() => navigate('/profile')} className="mt-6 text-[#4a2c2a]/60 hover:text-[#4a2c2a] font-bold text-sm relative z-10 transition-colors">
+            <button onClick={() => navigate('/profile')} className="mt-6 text-[#4a2c2a]/60 dark:text-gray-400 hover:text-[#4a2c2a] dark:text-gray-100 font-bold text-sm relative z-10 transition-colors">
               Back to Profile
             </button>
           </div>
@@ -104,33 +104,33 @@ const RapidRound = () => {
             {/* Top Bar */}
             <div className="flex justify-between items-center mb-8 px-4">
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${timeLeft <= 10 ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-[#fdf6f4] text-[#4a2c2a]'}`}>
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${timeLeft <= 10 ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-[#fdf6f4] dark:bg-[#121212] text-[#4a2c2a] dark:text-gray-100'}`}>
                   {timeLeft}s
                 </div>
-                <div className="text-[#4a2c2a]/60 font-semibold uppercase tracking-wider text-sm">Time Left</div>
+                <div className="text-[#4a2c2a]/60 dark:text-gray-400 font-semibold uppercase tracking-wider text-sm">Time Left</div>
               </div>
               
               <div className="flex items-center gap-3 text-right">
-                <div className="text-[#4a2c2a]/60 font-semibold uppercase tracking-wider text-sm">Score</div>
-                <div className="text-3xl font-extrabold text-[#4a2c2a]">{score}</div>
+                <div className="text-[#4a2c2a]/60 dark:text-gray-400 font-semibold uppercase tracking-wider text-sm">Score</div>
+                <div className="text-3xl font-extrabold text-[#4a2c2a] dark:text-gray-100">{score}</div>
               </div>
             </div>
 
             {/* Flashcard Area */}
-            <div className="bg-white h-[400px] rounded-[3rem] p-10 border border-[#e3979d]/20 shadow-md relative flex flex-col items-center justify-center text-center cursor-pointer transition-all transform hover:scale-[1.01]" onClick={() => !isFlipped && setIsFlipped(true)}>
+            <div className="bg-white dark:bg-[#1e1e1e] h-[400px] rounded-[3rem] p-10 border border-[#e3979d]/20 dark:border-white/10 shadow-md relative flex flex-col items-center justify-center text-center cursor-pointer transition-all transform hover:scale-[1.01]" onClick={() => !isFlipped && setIsFlipped(true)}>
               {!isFlipped ? (
                 <>
-                  <p className="text-[#4a2c2a]/50 font-bold uppercase tracking-widest text-sm mb-6 absolute top-10">Question</p>
-                  <h2 className="text-3xl md:text-4xl font-extrabold text-[#4a2c2a] leading-tight px-4">
+                  <p className="text-[#4a2c2a]/50 dark:text-gray-500 font-bold uppercase tracking-widest text-sm mb-6 absolute top-10">Question</p>
+                  <h2 className="text-3xl md:text-4xl font-extrabold text-[#4a2c2a] dark:text-gray-100 leading-tight px-4">
                     {cards[currentIndex]?.front}
                   </h2>
-                  <p className="text-[#4a2c2a]/40 font-medium text-sm absolute bottom-10 animate-bounce">
+                  <p className="text-[#4a2c2a]/40 dark:text-gray-500 font-medium text-sm absolute bottom-10 animate-bounce">
                     Tap to reveal answer
                   </p>
                 </>
               ) : (
                 <div className="w-full h-full flex flex-col justify-center items-center animate-fade-in-up">
-                  <p className="text-[#4a2c2a]/50 font-bold uppercase tracking-widest text-sm mb-6 absolute top-10">Answer</p>
+                  <p className="text-[#4a2c2a]/50 dark:text-gray-500 font-bold uppercase tracking-widest text-sm mb-6 absolute top-10">Answer</p>
                   <h2 className="text-3xl md:text-4xl font-bold text-[#800020] leading-tight px-4">
                     {cards[currentIndex]?.back}
                   </h2>
@@ -138,13 +138,13 @@ const RapidRound = () => {
                   <div className="absolute bottom-10 w-full px-10 flex gap-4">
                     <button 
                       onClick={(e) => { e.stopPropagation(); handleAnswer(false); }}
-                      className="flex-1 bg-[#fdf6f4] hover:bg-[#f9e8e6] text-[#4a2c2a] font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-colors border border-[#e3979d]/20"
+                      className="flex-1 bg-[#fdf6f4] dark:bg-[#121212] hover:bg-[#f9e8e6] dark:bg-[#800020]/20 text-[#4a2c2a] dark:text-gray-100 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-colors border border-[#e3979d]/20 dark:border-white/10"
                     >
                       <XCircle size={20} /> Missed It
                     </button>
                     <button 
                       onClick={(e) => { e.stopPropagation(); handleAnswer(true); }}
-                      className="flex-1 bg-[#eef6f1] hover:bg-[#dcf0e3] text-[#4a9d6e] font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-colors border border-[#95c9a4]/30"
+                      className="flex-1 bg-[#eef6f1] dark:bg-[#4a9d6e]/20 hover:bg-[#dcf0e3] text-[#4a9d6e] font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-colors border border-[#95c9a4]/30"
                     >
                       <CheckCircle size={20} /> Knew It!
                     </button>
@@ -153,22 +153,22 @@ const RapidRound = () => {
               )}
             </div>
             
-            <div className="w-full h-2 bg-[#fdf6f4] rounded-full mt-8 overflow-hidden">
+            <div className="w-full h-2 bg-[#fdf6f4] dark:bg-[#121212] rounded-full mt-8 overflow-hidden">
                <div className="h-full bg-[#800020] rounded-full transition-all duration-1000" style={{ width: `${(timeLeft / 60) * 100}%` }}></div>
             </div>
           </div>
         )}
 
         {status === 'finished' && (
-          <div className="bg-white rounded-[3rem] p-12 text-center border border-[#e3979d]/20 shadow-sm relative overflow-hidden animate-fade-in-up">
+          <div className="bg-white dark:bg-[#1e1e1e] rounded-[3rem] p-12 text-center border border-[#e3979d]/20 dark:border-white/10 shadow-sm relative overflow-hidden animate-fade-in-up">
             <div className="text-6xl mb-6">🎉</div>
-            <h1 className="text-4xl font-extrabold text-[#4a2c2a] mb-2">Time's Up!</h1>
-            <p className="text-[#4a2c2a]/70 font-medium text-lg mb-8">You survived the rapid round.</p>
+            <h1 className="text-4xl font-extrabold text-[#4a2c2a] dark:text-gray-100 mb-2">Time's Up!</h1>
+            <p className="text-[#4a2c2a]/70 dark:text-gray-400 font-medium text-lg mb-8">You survived the rapid round.</p>
             
-            <div className="bg-[#fdf6f4] rounded-3xl p-8 mb-10 border border-[#e3979d]/20 inline-block w-full max-w-sm">
-              <p className="text-[#4a2c2a]/50 font-bold uppercase tracking-widest text-sm mb-2">Final Score</p>
+            <div className="bg-[#fdf6f4] dark:bg-[#121212] rounded-3xl p-8 mb-10 border border-[#e3979d]/20 dark:border-white/10 inline-block w-full max-w-sm">
+              <p className="text-[#4a2c2a]/50 dark:text-gray-500 font-bold uppercase tracking-widest text-sm mb-2">Final Score</p>
               <div className="text-6xl font-extrabold text-[#800020] mb-2">{score}</div>
-              <p className="text-[#4a2c2a]/80 font-semibold text-sm">cards answered correctly</p>
+              <p className="text-[#4a2c2a]/80 dark:text-gray-300 font-semibold text-sm">cards answered correctly</p>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -180,7 +180,7 @@ const RapidRound = () => {
               </button>
               <button 
                 onClick={() => navigate('/profile')} 
-                className="bg-[#fdf6f4] hover:bg-[#f9e8e6] text-[#4a2c2a] font-bold px-8 py-4 rounded-full border border-[#e3979d]/20 transition-all flex items-center justify-center"
+                className="bg-[#fdf6f4] dark:bg-[#121212] hover:bg-[#f9e8e6] dark:bg-[#800020]/20 text-[#4a2c2a] dark:text-gray-100 font-bold px-8 py-4 rounded-full border border-[#e3979d]/20 dark:border-white/10 transition-all flex items-center justify-center"
               >
                 Back to Profile
               </button>

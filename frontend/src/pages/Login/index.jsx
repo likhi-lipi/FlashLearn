@@ -35,7 +35,7 @@ const Login = () => {
 
   return (
     <div className="flex justify-center items-center h-[85vh] pt-10 transition-colors">
-      <div className="bg-white dark:bg-[#1e1e1e] p-12 rounded-[3rem] w-full max-w-lg shadow-[0_40px_80px_-15px_rgba(233,170,182,0.2)] dark:shadow-none border border-gray-100 dark:border-white/10 flex flex-col items-center transition-colors">
+      <div className="bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] p-12 rounded-[3rem] w-full max-w-lg shadow-[0_40px_80px_-15px_rgba(233,170,182,0.2)] dark:shadow-none border border-gray-100 dark:border-white/10 flex flex-col items-center transition-colors">
         <div className="w-20 h-20 rounded-3xl bg-accent/10 dark:bg-accent/20 flex items-center justify-center text-accent dark:text-[#e3979d] mb-8 shadow-inner transition-colors">
            <span className="text-3xl font-bold">F</span>
         </div>

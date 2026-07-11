@@ -108,7 +108,7 @@ const MakeFlashcards = () => {
       
       {/* App-like Header */}
       <div className="w-full flex items-center justify-between mb-4 px-2">
-        <button onClick={() => navigate('/dashboard')} className="p-2 -ml-2 text-dark dark:text-gray-100 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors">
+        <button onClick={() => navigate('/dashboard')} className="p-2 -ml-2 text-dark dark:text-gray-100 hover:bg-black/5 dark:hover:bg-white dark:bg-[#1e1e1e]/10 rounded-full transition-colors">
           <X size={24} />
         </button>
         <h1 className="text-xl font-bold text-dark dark:text-gray-100 transition-colors">New Flashcard</h1>
@@ -132,7 +132,7 @@ const MakeFlashcards = () => {
         {/* Front Field */}
         <div>
           <label className="text-[11px] font-bold text-muted dark:text-gray-400 mb-2 block tracking-wider transition-colors">FRONT (TERM)</label>
-          <div className="bg-white dark:bg-[#1e1e1e] rounded-xl border border-gray-200/80 dark:border-white/10 p-4 transition-all focus-within:border-primary/40 dark:focus-within:border-[#e3979d]/40 focus-within:ring-2 focus-within:ring-primary/10 dark:focus-within:ring-[#e3979d]/10 shadow-sm">
+          <div className="bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-xl border border-gray-200/80 dark:border-white/10 p-4 transition-all focus-within:border-primary/40 dark:focus-within:border-[#e3979d]/40 focus-within:ring-2 focus-within:ring-primary/10 dark:focus-within:ring-[#e3979d]/10 shadow-sm">
             <textarea 
               value={frontText}
               onChange={(e) => setFrontText(e.target.value)}
@@ -145,7 +145,7 @@ const MakeFlashcards = () => {
         {/* Back Field */}
         <div>
           <label className="text-[11px] font-bold text-muted dark:text-gray-400 mb-2 block tracking-wider transition-colors">BACK (DEFINITION)</label>
-          <div className="bg-white dark:bg-[#1e1e1e] rounded-xl border border-gray-200/80 dark:border-white/10 transition-all focus-within:border-primary/40 dark:focus-within:border-[#e3979d]/40 focus-within:ring-2 focus-within:ring-primary/10 dark:focus-within:ring-[#e3979d]/10 shadow-sm flex flex-col overflow-hidden">
+          <div className="bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-xl border border-gray-200/80 dark:border-white/10 transition-all focus-within:border-primary/40 dark:focus-within:border-[#e3979d]/40 focus-within:ring-2 focus-within:ring-primary/10 dark:focus-within:ring-[#e3979d]/10 shadow-sm flex flex-col overflow-hidden">
             <div className="p-4">
               <textarea 
                 value={backText}
@@ -157,9 +157,9 @@ const MakeFlashcards = () => {
             
             {/* Toolbar */}
             <div className="px-4 py-3 border-t border-gray-100 dark:border-white/5 flex items-center gap-4 transition-colors">
-              <button className="text-dark dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-white/10 p-1.5 rounded-md transition-colors"><Bold size={18} /></button>
-              <button className="text-dark dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-white/10 p-1.5 rounded-md transition-colors"><Italic size={18} /></button>
-              <button className="text-dark dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-white/10 p-1.5 rounded-md transition-colors mr-2"><List size={18} /></button>
+              <button className="text-dark dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-white dark:bg-[#1e1e1e]/10 p-1.5 rounded-md transition-colors"><Bold size={18} /></button>
+              <button className="text-dark dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-white dark:bg-[#1e1e1e]/10 p-1.5 rounded-md transition-colors"><Italic size={18} /></button>
+              <button className="text-dark dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-white dark:bg-[#1e1e1e]/10 p-1.5 rounded-md transition-colors mr-2"><List size={18} /></button>
               
               <button className="flex items-center gap-1.5 bg-[#E6F0FF] dark:bg-blue-500/20 text-[#4A72FF] dark:text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors hover:opacity-90 ml-auto">
                 <ImageIcon size={14} />
@@ -182,7 +182,7 @@ const MakeFlashcards = () => {
               </button>
             )}
           </label>
-          <div className="relative bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-xl p-3 flex items-center justify-between border border-gray-200/50 dark:border-white/10 shadow-sm cursor-pointer hover:bg-white/80 dark:hover:bg-white/10 transition-colors">
+          <div className="relative bg-white dark:bg-[#1e1e1e]/50 dark:bg-white dark:bg-[#1e1e1e]/5 backdrop-blur-sm rounded-xl p-3 flex items-center justify-between border border-gray-200/50 dark:border-white/10 shadow-sm cursor-pointer hover:bg-white dark:bg-[#1e1e1e]/80 dark:hover:bg-white dark:bg-[#1e1e1e]/10 transition-colors">
             
             {!isCreatingDeck && (
               <select 
@@ -210,7 +210,7 @@ const MakeFlashcards = () => {
                     onChange={(e) => setNewDeckTitle(e.target.value)}
                     onKeyDown={handleCreateDeck}
                     placeholder="Type deck name & press Enter"
-                    className="text-[15px] font-bold text-dark dark:text-gray-100 leading-tight bg-transparent border-b border-primary/50 dark:border-[#e3979d]/50 outline-none w-full pb-0.5 transition-colors"
+                    className="text-[15px] font-bold text-dark dark:text-gray-100 leading-tight bg-transparent border-b border-primary/50 dark:border-[#e3979d]/50 dark:border-white/20 outline-none w-full pb-0.5 transition-colors"
                   />
                 ) : (
                   <>
@@ -233,7 +233,7 @@ const MakeFlashcards = () => {
         {/* Tags */}
         <div>
           <label className="text-[11px] font-bold text-muted dark:text-gray-400 mb-2 block tracking-wider transition-colors">TAGS</label>
-          <div className="bg-white/50 dark:bg-[#1e1e1e] backdrop-blur-sm rounded-xl p-3 flex flex-wrap items-center gap-2 border border-gray-200/50 dark:border-white/10 shadow-sm min-h-[50px] transition-colors">
+          <div className="bg-white dark:bg-[#1e1e1e]/50 dark:bg-[#1e1e1e] backdrop-blur-sm rounded-xl p-3 flex flex-wrap items-center gap-2 border border-gray-200/50 dark:border-white/10 shadow-sm min-h-[50px] transition-colors">
             {tags.map(tag => (
               <span key={tag} className="flex items-center gap-1 bg-gray-200/70 dark:bg-gray-800 text-dark dark:text-gray-100 text-[13px] font-medium px-3 py-1.5 rounded-full transition-colors">
                 {tag}
@@ -252,7 +252,7 @@ const MakeFlashcards = () => {
         </div>
 
         {/* Reference Image */}
-        <label className="w-full mt-2 relative rounded-2xl overflow-hidden border-2 border-dashed border-gray-300 dark:border-white/20 bg-white/40 dark:bg-[#1e1e1e]/40 h-40 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-white/60 dark:hover:bg-[#1e1e1e]/60 hover:border-gray-400 dark:hover:border-white/40 transition-all group">
+        <label className="w-full mt-2 relative rounded-2xl overflow-hidden border-2 border-dashed border-gray-300 dark:border-white/20 bg-white dark:bg-[#1e1e1e]/40 dark:bg-[#1e1e1e]/40 h-40 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-white dark:bg-[#1e1e1e]/60 dark:hover:bg-[#1e1e1e]/60 hover:border-gray-400 dark:hover:border-white/40 transition-all group">
           <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
           {image ? (
             <img src={image} alt="Reference preview" className="w-full h-full object-cover" />

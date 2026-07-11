@@ -25,7 +25,7 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-background text-dark font-sans flex flex-col">
+      <div className="min-h-screen bg-background dark:bg-[#121212] text-dark dark:text-gray-100 font-sans flex flex-col transition-colors duration-300">
         <Navbar />
         <Routes>
           <Route path="/" element={<Landing />} />

@@ -90,7 +90,7 @@ const AIGenerator = () => {
       </div>
 
       {/* Input Section */}
-      <div className="w-full bg-white dark:bg-[#1e1e1e] rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-none border border-gray-100 dark:border-white/10 flex flex-col gap-8 relative transition-colors">
+      <div className="w-full bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-none border border-gray-100 dark:border-white/10 flex flex-col gap-8 relative transition-colors">
         <textarea
           className="w-full h-80 bg-transparent border-none p-0 text-dark dark:text-gray-100 placeholder:text-muted/40 dark:placeholder:text-gray-600 focus:outline-none resize-none text-xl leading-relaxed font-medium transition-colors"
           placeholder="Paste your text here to generate cards..."
@@ -142,7 +142,7 @@ const AIGenerator = () => {
                      )}
                   </div>
                 </div>
-                <div className="hidden md:block w-px bg-gray-200/50 dark:bg-white/10 transition-colors"></div>
+                <div className="hidden md:block w-px bg-gray-200/50 dark:bg-white dark:bg-[#1e1e1e]/10 transition-colors"></div>
                 <div className="flex-1 space-y-4">
                   <label className="text-[10px] font-bold text-green-700 dark:text-green-400 uppercase tracking-widest transition-colors">Answer</label>
                   <textarea 
@@ -154,7 +154,7 @@ const AIGenerator = () => {
                 </div>
                 <button 
                   onClick={() => removeCard(idx)}
-                  className="absolute -right-3 -top-3 bg-white dark:bg-[#2a2a2a] text-muted dark:text-gray-400 hover:text-red-500 w-10 h-10 rounded-full flex items-center justify-center shadow-lg border border-gray-100 dark:border-white/10 opacity-0 group-hover:opacity-100 transition-all"
+                  className="absolute -right-3 -top-3 bg-white dark:bg-[#1e1e1e] dark:bg-[#2a2a2a] text-muted dark:text-gray-400 hover:text-red-500 w-10 h-10 rounded-full flex items-center justify-center shadow-lg border border-gray-100 dark:border-white/10 opacity-0 group-hover:opacity-100 transition-all"
                 >
                   <Trash2 size={18} />
                 </button>
@@ -168,7 +168,7 @@ const AIGenerator = () => {
                 <select 
                   value={selectedDeck}
                   onChange={(e) => setSelectedDeck(e.target.value)}
-                  className="bg-white dark:bg-[#1e1e1e] border border-gray-100 dark:border-white/10 rounded-xl px-5 py-2.5 text-dark dark:text-gray-100 font-bold outline-none focus:ring-2 focus:ring-primary/10 dark:focus:ring-white/10 shadow-sm text-sm transition-colors"
+                  className="bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] border border-gray-100 dark:border-white/10 rounded-xl px-5 py-2.5 text-dark dark:text-gray-100 font-bold outline-none focus:ring-2 focus:ring-primary/10 dark:focus:ring-white/10 shadow-sm text-sm transition-colors"
                 >
                   {decks.length === 0 && <option value="">No decks available</option>}
                   {decks.map(d => (

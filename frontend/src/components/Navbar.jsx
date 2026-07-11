@@ -1,10 +1,12 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { User } from 'lucide-react';
+import { ThemeContext } from '../context/ThemeContext';
+import { User, Moon, Sun } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
+  const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,7 +18,7 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-background/95 backdrop-blur-md text-[#4A4A4A] py-6 px-6 fixed top-0 left-0 right-0 z-50 shadow-sm shadow-[#800020]/5 border-b border-[#e3979d]/20">
+    <nav className="bg-background/95 dark:bg-[#121212]/95 backdrop-blur-md text-[#4A4A4A] dark:text-gray-200 py-6 px-6 fixed top-0 left-0 right-0 z-50 shadow-sm shadow-[#800020]/5 dark:shadow-black/20 border-b border-[#e3979d]/20 dark:border-white/10 transition-colors duration-300">
       <div className="container mx-auto flex justify-between items-center max-w-7xl">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2 font-bold text-[1.75rem] tracking-tight text-primary">
@@ -24,7 +26,7 @@ const Navbar = () => {
         </Link>
         
         {/* Links */}
-        <div className="hidden lg:flex items-center space-x-10 text-[15px] font-bold text-[#4a2c2a]">
+        <div className="hidden lg:flex items-center space-x-10 text-[15px] font-bold text-[#4a2c2a] dark:text-gray-300">
           <Link to="/browse" className={`transition-colors relative group py-1 ${isActive('/browse') ? 'text-primary' : 'hover:text-primary'}`}>
             Find Flashcards
             <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all ${isActive('/browse') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
@@ -43,11 +45,19 @@ const Navbar = () => {
           </Link>
         </div>
         
-        {/* Auth Actions */}
-        <div className="flex items-center space-x-8 font-bold text-[15px]">
+        {/* Auth & Theme Actions */}
+        <div className="flex items-center space-x-6 font-bold text-[15px]">
+          <button 
+            onClick={toggleDarkMode} 
+            className="p-2.5 rounded-xl border border-primary/20 dark:border-white/10 text-primary dark:text-gray-300 hover:bg-primary/5 dark:hover:bg-white/5 transition-all shadow-sm"
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+          
           {user ? (
-            <div className="flex items-center space-x-8">
-              <Link to="/profile" className="flex items-center space-x-2 text-[#4a2c2a] hover:text-primary transition-colors">
+            <div className="flex items-center space-x-6">
+              <Link to="/profile" className="flex items-center space-x-2 text-[#4a2c2a] dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
                 <span>Profile</span>
               </Link>
               <button 
@@ -58,8 +68,8 @@ const Navbar = () => {
               </button>
             </div>
           ) : (
-            <div className="flex items-center space-x-8">
-              <Link to="/login" className="text-[#4a2c2a] hover:text-primary transition-colors">Log in</Link>
+            <div className="flex items-center space-x-6">
+              <Link to="/login" className="text-[#4a2c2a] dark:text-gray-300 hover:text-primary transition-colors">Log in</Link>
               <Link 
                 to="/login" 
                 className="bg-primary text-white px-7 py-3 rounded-full hover:opacity-95 transition-all shadow-md shadow-primary/20"
