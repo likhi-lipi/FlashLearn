@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
-    "@react-three/fiber": "^9.6.1",
+    "@react-three/fiber": "^8.17.14",
     "autoprefixer": "^10.5.0",
     "axios": "^1.7.9",
     "chart.js": "^4.5.1",
