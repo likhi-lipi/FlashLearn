@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { Sparkles, Zap, Mic, Globe, ArrowRight } from 'lucide-react';
-import axios from 'axios';
+import api from '../../api/axios';
 
 const Landing = () => {
   const { user } = useContext(AuthContext);
@@ -11,7 +11,7 @@ const Landing = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/public/stats');
+        const res = await api.get('/public/stats');
         setStats({
           users: res.data.users.toLocaleString() + '+',
           decks: res.data.decks.toLocaleString() + '+'

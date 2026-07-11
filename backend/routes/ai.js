@@ -48,10 +48,10 @@ ${text}`;
 
   try {
     let responseText;
-    const apiKey = process.env.GEMINI_API_KEY_1;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return res.status(500).json({ msg: 'GEMINI_API_KEY_1 is not configured' });
+      return res.status(500).json({ msg: 'GEMINI_API_KEY is not configured' });
     }
 
     let success = false;
@@ -59,11 +59,11 @@ ${text}`;
 
     // Try key
     try {
-      console.log(`Trying API key GEMINI_API_KEY_1 starting with: ${apiKey.substring(0, 8)}...`);
+      console.log(`Trying API key GEMINI_API_KEY starting with: ${apiKey.substring(0, 8)}...`);
       responseText = await tryGenerateWithKey(apiKey, prompt);
       success = true;
     } catch (err) {
-      console.error(`Error with GEMINI_API_KEY_1:`, err.message);
+      console.error(`Error with GEMINI_API_KEY:`, err.message);
       lastError = err;
     }
 

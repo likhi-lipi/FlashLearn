@@ -2,7 +2,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 require('dotenv').config();
 const keys = [
-  process.env.GEMINI_API_KEY_1
+  process.env.GEMINI_API_KEY
 ].filter(Boolean);
 
 async function test() {

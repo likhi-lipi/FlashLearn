@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const User = require('./models/User');
 const bcrypt = require('bcryptjs');
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/FlashLearn";
+const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/FlashLearn";
 
 async function test() {
   try {
