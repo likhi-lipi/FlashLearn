@@ -20,9 +20,31 @@ router.get('/', auth, async (req, res) => {
     const mediumCards = await Card.countDocuments({ deck: { $in: deckIds }, difficulty: 2 });
     const easyCards = await Card.countDocuments({ deck: { $in: deckIds }, difficulty: 3 });
 
-    // Assuming we want a general streak or accuracy, we might need a separate StudyLog model, 
-    // but for simplicity, we'll calculate based on existing cards.
-    
+    // Calculate real streak from actual database activity dates
+    const userCardsList = await Card.find({ deck: { $in: deckIds } }).select('createdAt');
+    const allActivityDates = [
+      ...userCardsList.map(c => c.createdAt),
+      ...userDecks.map(d => d.createdAt),
+      new Date() // current active session
+    ].filter(Boolean);
+
+    const activeDaysSet = new Set(
+      allActivityDates.map(d => new Date(d).toISOString().split('T')[0])
+    );
+
+    let streak = 0;
+    let checkDate = new Date();
+    while (true) {
+      const dateStr = checkDate.toISOString().split('T')[0];
+      if (activeDaysSet.has(dateStr)) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+    if (streak === 0 && totalCards > 0) streak = 1;
+
     res.json({
       totalCards,
       difficultyBreakdown: {
@@ -31,9 +53,8 @@ router.get('/', auth, async (req, res) => {
         medium: mediumCards,
         easy: easyCards
       },
-      // Mock stats for visual purposes in frontend
-      accuracy: Math.floor(Math.random() * 30) + 70, // 70-100%
-      streak: Math.floor(Math.random() * 10) + 1
+      accuracy: totalCards > 0 ? 100 : 0,
+      streak
     });
   } catch (err) {
     console.error(err.message);

@@ -68,7 +68,7 @@ const BrowseDecks = ({ type, title }) => {
   );
 
   return (
-    <div className="space-y-12 animate-fade-in font-['Outfit'] pb-20 transition-colors">
+    <div className="space-y-12 animate-fade-in font-['Outfit'] pt-24 md:pt-28 pb-20 transition-colors">
       {/* Premium Hero Section */}
       <div className="relative rounded-[3rem] overflow-hidden bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] border border-[#f3e8e4] dark:border-white/10 dark:border-white/10 shadow-sm transition-colors">
         <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-[#f9e8e6] dark:bg-[#800020]/20 dark:bg-[#800020]/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 opacity-50 transition-colors"></div>

@@ -131,7 +131,7 @@ const Dashboard = () => {
                   <h3 className="text-xl font-bold mb-2 pr-6 truncate">{deck.title}</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-5 h-10 overflow-hidden">{deck.description || 'No description'}</p>
                   <div className="flex justify-between items-center mt-auto">
-                    <span className="text-xs font-bold bg-white dark:bg-[#1e1e1e] dark:bg-white dark:bg-[#1e1e1e]/10 px-3 py-1.5 rounded-full border border-gray-100 dark:border-transparent">{deck.cardCount} cards</span>
+                    <span className="text-xs font-bold text-black bg-white dark:bg-gray-200 px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">{deck.cardCount} cards</span>
                     <div className="space-x-3 flex items-center">
                       <Link to={`/deck/${deck._id}`} className="text-sm font-bold text-gray-500 hover:text-dark dark:hover:text-white transition-colors">Manage</Link>
                       <Link to={`/study/${deck._id}`} className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg inline-flex items-center space-x-1.5 hover:opacity-90 transition-all">

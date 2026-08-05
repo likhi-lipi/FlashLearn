@@ -3,14 +3,30 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
+const CANDIDATE_MODELS = [
+  "gemini-flash-latest",
+  "gemini-1.5-flash",
+  "gemini-2.0-flash-lite",
+  "gemini-1.5-pro"
+];
+
 // Helper function to generate content with a specific key
 const tryGenerateWithKey = async (apiKey, prompt) => {
   if (!apiKey) throw new Error("API key not provided");
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Using gemini-2.5-flash which is confirmed to work
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+  
+  let lastErr;
+  for (const modelName of CANDIDATE_MODELS) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (err) {
+      console.warn(`Model ${modelName} failed: ${err.message}`);
+      lastErr = err;
+    }
+  }
+  throw lastErr || new Error("All generative models failed");
 };
 
 // @route   POST api/ai/generate
@@ -71,15 +87,13 @@ ${text}`;
       throw lastError || new Error("All API keys failed");
     }
 
-    // Clean up response if it contains markdown JSON blocks
-    let jsonStr = responseText.trim();
-    if (jsonStr.startsWith('\`\`\`json')) {
-      jsonStr = jsonStr.replace(/^\`\`\`json/, '').replace(/\`\`\`$/, '').trim();
-    } else if (jsonStr.startsWith('\`\`\`')) {
-      jsonStr = jsonStr.replace(/^\`\`\`/, '').replace(/\`\`\`$/, '').trim();
+    // Robustly extract JSON array from responseText
+    const jsonMatch = responseText.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      throw new Error("Failed to parse JSON array from AI response");
     }
 
-    const cards = JSON.parse(jsonStr);
+    const cards = JSON.parse(jsonMatch[0]);
     res.json(cards);
   } catch (err) {
     console.error('Final Generation Error:', err.message);

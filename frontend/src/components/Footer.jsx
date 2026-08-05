@@ -12,14 +12,26 @@ const Footer = () => {
             <p className="text-[#fdf6f4]/80 font-medium text-sm text-center sm:text-left max-w-xs leading-relaxed">
               AI-powered flashcards for smarter learning.
             </p>
-            <div className="flex items-center gap-4 mt-2">
-              <a href="#" className="p-2 rounded-full bg-white dark:bg-[#1e1e1e]/10 hover:bg-white dark:bg-[#1e1e1e]/20 transition-all text-[#fdf6f4]">
+            <div className="flex items-center gap-3 mt-2">
+              <a 
+                href="#" 
+                aria-label="GitHub"
+                className="w-10 h-10 rounded-full bg-white text-primary hover:bg-white/90 hover:scale-105 transition-all flex items-center justify-center shadow-sm"
+              >
                 <Github size={18} />
               </a>
-              <a href="#" className="p-2 rounded-full bg-white dark:bg-[#1e1e1e]/10 hover:bg-white dark:bg-[#1e1e1e]/20 transition-all text-[#fdf6f4]">
+              <a 
+                href="#" 
+                aria-label="LinkedIn"
+                className="w-10 h-10 rounded-full bg-white text-primary hover:bg-white/90 hover:scale-105 transition-all flex items-center justify-center shadow-sm"
+              >
                 <Linkedin size={18} />
               </a>
-              <a href="#" className="p-2 rounded-full bg-white dark:bg-[#1e1e1e]/10 hover:bg-white dark:bg-[#1e1e1e]/20 transition-all text-[#fdf6f4]">
+              <a 
+                href="#" 
+                aria-label="Twitter"
+                className="w-10 h-10 rounded-full bg-white text-primary hover:bg-white/90 hover:scale-105 transition-all flex items-center justify-center shadow-sm"
+              >
                 <Twitter size={18} />
               </a>
             </div>

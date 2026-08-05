@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api/axios';
-import { Wand2, Save, Trash2, Check, RefreshCw, Sparkles, Mic } from 'lucide-react';
+import { Wand2, Save, Trash2, Check, RefreshCw, Sparkles, Mic, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -12,6 +12,10 @@ const AIGenerator = () => {
   const [selectedDeck, setSelectedDeck] = useState('');
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showNewDeckModal, setShowNewDeckModal] = useState(false);
+  const [newDeckTitle, setNewDeckTitle] = useState('');
+  const [newDeckDesc, setNewDeckDesc] = useState('');
+  const [creatingDeck, setCreatingDeck] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +29,25 @@ const AIGenerator = () => {
       if (res.data.length > 0) setSelectedDeck(res.data[0]._id);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleCreateDeck = async (e) => {
+    e.preventDefault();
+    if (!newDeckTitle.trim()) return;
+    setCreatingDeck(true);
+    try {
+      const res = await api.post('/decks', { title: newDeckTitle, description: newDeckDesc });
+      const newDeck = res.data;
+      setDecks(prev => [newDeck, ...prev]);
+      setSelectedDeck(newDeck._id);
+      setShowNewDeckModal(false);
+      setNewDeckTitle('');
+      setNewDeckDesc('');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCreatingDeck(false);
     }
   };
 
@@ -74,7 +97,7 @@ const AIGenerator = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-12 pb-24 pt-10 flex flex-col items-center text-dark dark:text-gray-100 transition-colors">
+    <div className="max-w-5xl mx-auto space-y-12 pb-24 pt-24 md:pt-28 flex flex-col items-center text-dark dark:text-gray-100 transition-colors">
       {/* Badge */}
       <div className="bg-secondary/50 dark:bg-[#1e1e1e] px-5 py-2 rounded-full border border-secondary dark:border-white/10 flex items-center gap-2 text-dark/60 dark:text-gray-400 font-bold text-xs uppercase tracking-widest transition-colors">
          <Sparkles size={14} className="text-primary dark:text-[#e3979d] transition-colors" />
@@ -90,9 +113,9 @@ const AIGenerator = () => {
       </div>
 
       {/* Input Section */}
-      <div className="w-full bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-none border border-gray-100 dark:border-white/10 flex flex-col gap-8 relative transition-colors">
+      <div className="w-full bg-white dark:bg-[#1e1e1e] rounded-[2rem] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-none border border-gray-100 dark:border-white/10 flex flex-col gap-3 relative transition-colors">
         <textarea
-          className="w-full h-80 bg-transparent border-none p-0 text-dark dark:text-gray-100 placeholder:text-muted/40 dark:placeholder:text-gray-600 focus:outline-none resize-none text-xl leading-relaxed font-medium transition-colors"
+          className="w-full h-24 bg-transparent border-none p-0 text-dark dark:text-gray-100 placeholder:text-muted/40 dark:placeholder:text-gray-600 focus:outline-none resize-none text-base leading-relaxed font-medium transition-colors"
           placeholder="Paste your text here to generate cards..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -117,7 +140,7 @@ const AIGenerator = () => {
         <div className="w-full space-y-12 animate-fade-in-up mt-12">
           <div className="flex justify-between items-center">
             <h2 className="text-3xl font-bold text-dark dark:text-gray-100 transition-colors">Preview Generated Cards</h2>
-            <div className="bg-secondary/50 dark:bg-[#2a2a2a] px-4 py-1.5 rounded-full text-[10px] font-bold text-muted dark:text-gray-400 uppercase tracking-widest border border-secondary dark:border-white/10 transition-colors">
+            <div className="bg-white dark:bg-gray-200 px-4 py-1.5 rounded-full text-xs font-bold text-black uppercase tracking-widest border border-gray-300 shadow-sm transition-colors">
                {generatedCards.length} Cards Created
             </div>
           </div>
@@ -163,28 +186,104 @@ const AIGenerator = () => {
           </div>
 
           <div className="flex flex-col items-center gap-8 pt-10">
-             <div className="flex items-center gap-4">
+             <div className="flex flex-wrap items-center justify-center gap-3">
                 <span className="text-sm font-bold text-muted dark:text-gray-400 transition-colors">Save to:</span>
                 <select 
                   value={selectedDeck}
-                  onChange={(e) => setSelectedDeck(e.target.value)}
-                  className="bg-white dark:bg-[#1e1e1e] dark:bg-[#1e1e1e] border border-gray-100 dark:border-white/10 rounded-xl px-5 py-2.5 text-dark dark:text-gray-100 font-bold outline-none focus:ring-2 focus:ring-primary/10 dark:focus:ring-white/10 shadow-sm text-sm transition-colors"
+                  onChange={(e) => {
+                    if (e.target.value === 'CREATE_NEW') {
+                      setShowNewDeckModal(true);
+                    } else {
+                      setSelectedDeck(e.target.value);
+                    }
+                  }}
+                  className="bg-white dark:bg-[#1e1e1e] border border-gray-100 dark:border-white/10 rounded-xl px-5 py-2.5 text-dark dark:text-gray-100 font-bold outline-none focus:ring-2 focus:ring-primary/10 dark:focus:ring-white/10 shadow-sm text-sm transition-colors cursor-pointer"
                 >
-                  {decks.length === 0 && <option value="">No decks available</option>}
-                  {decks.map(d => (
-                    <option key={d._id} value={d._id}>{d.title}</option>
-                  ))}
+                  {decks.length === 0 ? (
+                    <option value="">No decks available</option>
+                  ) : (
+                    decks.map(d => (
+                      <option key={d._id} value={d._id}>{d.title}</option>
+                    ))
+                  )}
+                  <option value="CREATE_NEW">+ Create New Deck...</option>
                 </select>
+
+                <button
+                  type="button"
+                  onClick={() => setShowNewDeckModal(true)}
+                  className="bg-secondary/60 dark:bg-[#2a2a2a] text-dark dark:text-gray-200 hover:text-primary dark:hover:text-[#e3979d] font-bold px-4 py-2.5 rounded-xl flex items-center space-x-1.5 border border-secondary dark:border-white/10 text-sm transition-all shadow-sm"
+                >
+                  <Plus size={16} /> <span>New Deck</span>
+                </button>
              </div>
+
              <button 
                onClick={handleSaveCards}
                disabled={saving || !selectedDeck || success}
                className={`font-bold px-16 py-5 rounded-full flex items-center justify-center space-x-4 transition-all shadow-xl text-lg ${
-                 success ? 'bg-green-500 text-white' : 'bg-primary text-white hover:opacity-95 shadow-primary/20 dark:shadow-none'
+                 success ? 'bg-green-500 text-white' : 'bg-primary text-white hover:opacity-95 shadow-primary/20 dark:shadow-none disabled:opacity-50'
                }`}
              >
                {success ? <><Check size={24} /> <span>Saved to Collection</span></> : <><Save size={24} /> <span>Save to Deck</span></>}
              </button>
+          </div>
+        </div>
+      )}
+
+      {/* Create New Deck Modal */}
+      {showNewDeckModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#1e1e1e] border border-gray-100 dark:border-white/10 p-8 rounded-[2rem] max-w-md w-full shadow-2xl space-y-6 text-dark dark:text-gray-100 transition-colors">
+            <div className="flex justify-between items-center border-b border-gray-100 dark:border-white/10 pb-4">
+              <h3 className="text-2xl font-bold">Create New Deck</h3>
+              <button 
+                onClick={() => setShowNewDeckModal(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl font-bold px-2"
+              >
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleCreateDeck} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted dark:text-gray-400 uppercase tracking-widest px-1">Deck Title</label>
+                <input 
+                  type="text"
+                  placeholder="e.g. Organic Chemistry, World History..."
+                  value={newDeckTitle}
+                  onChange={(e) => setNewDeckTitle(e.target.value)}
+                  className="w-full bg-secondary/30 dark:bg-[#121212] border-none rounded-2xl px-5 py-3.5 text-dark dark:text-gray-100 font-medium focus:ring-2 focus:ring-primary/20 dark:focus:ring-[#e3979d]/20 outline-none transition-colors"
+                  required
+                  autoFocus
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted dark:text-gray-400 uppercase tracking-widest px-1">Description (Optional)</label>
+                <input 
+                  type="text"
+                  placeholder="Brief description of this deck"
+                  value={newDeckDesc}
+                  onChange={(e) => setNewDeckDesc(e.target.value)}
+                  className="w-full bg-secondary/30 dark:bg-[#121212] border-none rounded-2xl px-5 py-3.5 text-dark dark:text-gray-100 font-medium focus:ring-2 focus:ring-primary/20 dark:focus:ring-[#e3979d]/20 outline-none transition-colors"
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowNewDeckModal(false)}
+                  className="flex-1 bg-gray-100 dark:bg-[#2a2a2a] text-dark dark:text-gray-300 font-bold py-3.5 rounded-full hover:opacity-90 transition-all text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingDeck || !newDeckTitle.trim()}
+                  className="flex-1 bg-primary text-white font-bold py-3.5 rounded-full hover:opacity-95 transition-all text-sm shadow-md disabled:opacity-50"
+                >
+                  {creatingDeck ? 'Creating...' : 'Create & Select'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
