@@ -46,7 +46,7 @@ const Landing = () => {
                 Find Flashcards
               </Link>
               <Link 
-                to={user ? "/generate" : "/login"} 
+                to={user ? "/generate" : "/login?mode=signup"} 
                 className="bg-secondary dark:bg-[#1e1e1e] hover:bg-gray-200/50 dark:hover:bg-[#2a2a2a] transition-all text-dark dark:text-gray-100 font-bold text-lg px-12 py-5 rounded-full shadow-sm border border-white/40 dark:border-white/10"
               >
                 Make Flashcards
@@ -194,7 +194,7 @@ const Landing = () => {
                </p>
                <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                   <Link 
-                    to={user ? "/dashboard" : "/login"} 
+                    to={user ? "/dashboard" : "/login?mode=signup"} 
                     className="bg-accent hover:opacity-90 transition-all text-white font-bold text-xl px-16 py-6 rounded-full shadow-xl"
                   >
                     Get Started Free

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const auth = require('../middleware/auth');
 const Deck = require('../models/Deck');
 const Card = require('../models/Card');
@@ -9,7 +10,12 @@ const Card = require('../models/Card');
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
+    console.log(`[GET /decks] User ID from token: ${req.user.id}`);
+    console.log(`[GET /decks] Token header: ${req.header('x-auth-token') ? req.header('x-auth-token').substring(0, 15) + '...' : 'none'}`);
+    
     const decks = await Deck.find({ user: req.user.id }).sort({ createdAt: -1 });
+    console.log(`[GET /decks] Found ${decks.length} decks for user ${req.user.id}`);
+    
     // Get card counts for each deck
     const deckWithCounts = await Promise.all(decks.map(async (deck) => {
         const count = await Card.countDocuments({ deck: deck._id });
@@ -27,7 +33,9 @@ router.get('/', auth, async (req, res) => {
 // @access  Private
 router.get('/all', auth, async (req, res) => {
   try {
-    const decks = await Deck.find().sort({ title: 1 });
+    const decks = await Deck.find({
+      $or: [ { isPublic: true }, { user: req.user.id } ]
+    }).sort({ title: 1 });
     const deckWithCounts = await Promise.all(decks.map(async (deck) => {
         const count = await Card.countDocuments({ deck: deck._id });
         return { ...deck._doc, cardCount: count };
@@ -45,6 +53,11 @@ router.get('/all', auth, async (req, res) => {
 router.get('/popular', auth, async (req, res) => {
   try {
     const decks = await Deck.aggregate([
+      {
+        $match: {
+          $or: [ { isPublic: true }, { user: new mongoose.Types.ObjectId(req.user.id) } ]
+        }
+      },
       {
         $lookup: {
           from: 'cards',
@@ -72,7 +85,9 @@ router.get('/popular', auth, async (req, res) => {
 // @access  Private
 router.get('/recent', auth, async (req, res) => {
   try {
-    const decks = await Deck.find().sort({ createdAt: -1 }).limit(20);
+    const decks = await Deck.find({
+      $or: [ { isPublic: true }, { user: req.user.id } ]
+    }).sort({ createdAt: -1 }).limit(20);
     const deckWithCounts = await Promise.all(decks.map(async (deck) => {
         const count = await Card.countDocuments({ deck: deck._id });
         return { ...deck._doc, cardCount: count };

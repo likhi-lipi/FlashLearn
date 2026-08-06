@@ -79,6 +79,8 @@ const seedData = async () => {
         title: d.title,
         description: d.description,
         user: user._id,
+        category: d.category,
+        isPublic: true
       });
       await newDeck.save();
 

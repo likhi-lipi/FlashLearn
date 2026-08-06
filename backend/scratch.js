@@ -1,34 +1,30 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const User = require('./models/User');
-const bcrypt = require('bcryptjs');
+const Deck = require('./models/Deck');
 
 const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/FlashLearn";
 
-async function test() {
+async function query() {
   try {
     await mongoose.connect(MONGO_URI);
     console.log('Connected to DB');
 
-    let user = new User({ username: 'testuser_debug2', email: 'test_debug2@gmail.com', password: 'password123' });
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
-    
-    console.log('Saving user...');
-    await user.save();
-    console.log('User saved successfully');
+    const users = await User.find();
+    console.log('--- USERS ---');
+    for (const u of users) {
+      console.log(`ID: ${u._id}, Email: ${u.email}, Username: ${u.username}`);
+    }
 
-    const jwt = require('jsonwebtoken');
-    const payload = { user: { id: user.id } };
-    console.log('Signing token with JWT_SECRET:', process.env.JWT_SECRET);
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '5 days' }, (err, token) => {
-      if (err) throw err;
-      console.log('Token generated successfully');
-    });
+    const decks = await Deck.find();
+    console.log('\n--- DECKS ---');
+    for (const d of decks) {
+      console.log(`ID: ${d._id}, Title: ${d.title}, User ID: ${d.user}`);
+    }
   } catch (err) {
     console.error('ERROR OCCURRED:', err);
   } finally {
     mongoose.connection.close();
   }
 }
-test();
+query();

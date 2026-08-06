@@ -72,9 +72,9 @@ const seedData = async () => {
         title: d.title,
         description: d.description,
         user: user._id,
-        // if category field is in schema, great. If not, it will be ignored unless we update schema.
+        category: d.category,
+        isPublic: true
       });
-      // Assuming we need to bypass strict schema for 'category' or add it. Let's update schema.
       await newDeck.save();
 
       // Add cards

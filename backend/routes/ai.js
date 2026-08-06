@@ -4,10 +4,11 @@ const auth = require('../middleware/auth');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const CANDIDATE_MODELS = [
-  "gemini-flash-latest",
+  "gemini-2.0-flash",
   "gemini-1.5-flash",
+  "gemini-1.5-pro",
   "gemini-2.0-flash-lite",
-  "gemini-1.5-pro"
+  "gemini-flash-latest"
 ];
 
 // Helper function to generate content with a specific key
@@ -20,7 +21,8 @@ const tryGenerateWithKey = async (apiKey, prompt) => {
     try {
       const model = genAI.getGenerativeModel({ model: modelName });
       const result = await model.generateContent(prompt);
-      return result.response.text();
+      const text = result.response.text();
+      if (text) return text;
     } catch (err) {
       console.warn(`Model ${modelName} failed: ${err.message}`);
       lastErr = err;
@@ -88,7 +90,12 @@ ${text}`;
     }
 
     // Robustly extract JSON array from responseText
-    const jsonMatch = responseText.match(/\[[\s\S]*\]/);
+    let cleanText = (responseText || '').trim();
+    if (cleanText.startsWith('```')) {
+      cleanText = cleanText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+    }
+
+    const jsonMatch = cleanText.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
       throw new Error("Failed to parse JSON array from AI response");
     }

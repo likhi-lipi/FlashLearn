@@ -17,6 +17,10 @@ const DeckSchema = new mongoose.Schema({
     type: String,
     default: 'General'
   },
+  isPublic: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
